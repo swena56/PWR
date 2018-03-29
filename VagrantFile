@@ -1,0 +1,210 @@
+ENV["PROJECT_NAME"] = "SampleProject1"
+ENV["IP_ADDRESS"] = "192.168.1.244"
+
+## Prepare Windows System
+# @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin; refreshenv; choco install -y vagrant virtualbox putty Xming openssh; refreshenv; vagrant plugin install vagrant-triggers vagrant-vbguest; pause"
+
+## Start Server
+# vagrant up
+
+## TODO - configure SSH security
+# vagrant ssh-config
+
+################### VagrantFile #######################
+Vagrant.configure("2") do |config|
+
+  config.vm.box = "ubuntu/trusty64"
+  
+  config.vm.synced_folder "PWR", "/home/vagrant/PWR"
+  config.vm.network "forwarded_port", guest: 80, host: 8081
+  config.ssh.insert_key = false
+
+  if Vagrant.has_plugin?("vagrant-vbguest")
+    config.vbguest.auto_update = false
+    config.vbguest.no_install = true
+  end
+
+  config.ssh.forward_agent = true
+  config.ssh.forward_x11 = true
+  config.ssh.keep_alive = true
+
+  config.vm.provider :virtualbox do |vb|
+    vb.name = "Laravel #{ENV['PROJECT_NAME']} Server"
+    vb.customize ["modifyvm", :id, "--memory", "4096"]
+  end
+  
+  config.vm.provision "shell", inline: $dependencies, :args => ["#{ENV['PROJECT_NAME']}"]  
+  #config.vm.provision "shell", inline: $script, :args => ["#{ENV['PROJECT_NAME']}"] 
+
+  # After starting and provisioning the vagrant machine, start a putty connection
+  config.trigger.after :up do
+      run_remote "sudo service apache2 start"
+      run "'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' http://127.0.0.1:8081"
+      run "putty -X -ssh vagrant@127.0.0.1 -P 2222 -pw vagrant"
+  end
+
+end
+
+###################  Install Dependencies #####################
+$dependencies = <<SCRIPT
+
+    sudo add-apt-repository ppa:ondrej/php
+    sudo apt-get -qq update
+    sudo apt-get upgrade -y
+
+    sudo apt-get install -y apache2 php7.2 python-software-properties build-essential curl git m4 ruby texinfo screen ranger nano 
+    sudo apt-get install -y libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev libpng-dev libssl-dev
+    sudo apt-get install -y php7.2-mysql php7.2-curl php7.2-json php7.2-cgi php7.2-fpm php7.2-mbstring php7.2-xml php7.2-common php7.2-pgsql php7.2-zip php7.2-dev php7.2-gd php7.2-intl php7.2-mysqlnd php7.2-gd php7.2-imap
+
+    # Install Composer and Curl
+    if ! hash composer 2>/dev/null; then
+      
+      sudo curl -s https://getcomposer.org/installer | php
+      sudo mv composer.phar /usr/local/bin/composer
+
+      if grep -q 'composer' "/home/vagrant/.bashrc"; then
+          echo "Already added composer";
+        else 
+          echo "composer --version" >> /home/vagrant/.bashrc; 
+      fi
+      
+      # verify composer version
+      composer --version
+    fi
+
+    ## Install Archey
+    if ! hash archey 2>/dev/null; then
+
+        sudo apt-get install lsb-release scrot -y
+        wget http://github.com/downloads/djmelik/archey/archey-0.2.8.deb  
+        sudo dpkg -i archey-0.2.8.deb
+        rm archey-0.2.8.deb
+
+         if grep -q 'archey' "/home/vagrant/.bashrc"; then
+          echo "Already added screen fetch";
+        else 
+          echo "archey" >> /home/vagrant/.bashrc; 
+          echo 'ip -4 addr show eth1 | grep -oP "(?<=inet ).*(?=/)"' >> ~/.bashrc
+        fi
+    fi
+
+    if ! hash mysql 2>/dev/null; then
+      MYSQL_ROOT_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | sed 1q)
+      MYSQL_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | sed 1q)
+
+      echo "mysql root password: $MYSQL_ROOT_PASSWORD"
+
+      # Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
+      echo "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | sudo debconf-set-selections
+      echo "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | sudo debconf-set-selections
+      
+      sudo apt-get -y install mysql-server
+
+      # Run the MySQL Secure Installation wizard
+      ###mysql_secure_installation
+
+sudo cat > /home/vagrant/.my.cnf << EOL 
+[client]
+user=root
+password=$MYSQL_ROOT_PASSWORD
+#database=$1
+EOL
+
+      sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+      #mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+
+      sudo service mysql restart
+      #mysql --password=$MYSQL_ROOT_PASSWORD --user=root -e "CREATE DATABASE $1"
+
+    fi
+
+SCRIPT
+
+$script = <<SCRIPT
+# install PHP
+
+sudo apt-get -qq update
+
+sudo apt-get install -y python-software-properties build-essential curl git m4 ruby texinfo libbz2-dev libcurl4-openssl-dev libexpat-dev libncurses-dev zlib1g-dev libpng-dev screen ranger nano  libssl-dev screenfetch
+
+sudo apt-get install -y apache2 libapache2-mod-php7.0 php7.0 php7.0-mysql php7.0-curl php7.0-json php7.0-cgi php7.0-fpm php7.0-mbstring php7.0-mcrypt php7.0-xml php7.0-common php7.0-pgsql php7.0-zip php7.0-dev php7.0-gd php7.0-intl php7.0-mysqlnd php7.0-gd php7.0-imap
+
+# install misc
+sudo apt-get install -y screen ranger nano build-essential libssl-dev git curl screenfetch
+
+# sudo apt-get upgrade -y
+if grep -q 'screenfetch' "/home/vagrant/.bashrc"; then
+  echo "Already added screen fetch";
+else 
+  echo "screenfetch" >> /home/vagrant/.bashrc; 
+  echo 'ip -4 addr show eth1 | grep -oP "(?<=inet ).*(?=/)"' >> ~/.bashrc
+fi
+
+#sudo chmod 0600 ~/.ssh
+echo "Finished Install Dependencies and PHP";  
+
+# verify php version
+php -v
+
+# Install Composer and Curl
+if ! hash composer 2>/dev/null; then
+  sudo curl -s https://getcomposer.org/installer | php
+  sudo mv composer.phar /usr/local/bin/composer
+fi
+
+# verify composer version
+composer --version
+
+
+cd ~/
+sudo curl -sL https://deb.nodesource.com/setup_7.x > install_npm.sh
+sudo chmod 777 install_npm.sh
+sudo ./install_npm.sh
+
+sudo apt-get install -y nodejs
+
+node -v
+npm -v
+
+if ! hash mysql 2>/dev/null; then
+  MYSQL_ROOT_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | sed 1q)
+  MYSQL_PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | sed 1q)
+
+echo "mysql root password: $MYSQL_ROOT_PASSWORD"
+
+# Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
+echo "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD" | sudo debconf-set-selections
+echo "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD" | sudo debconf-set-selections
+sudo apt-get -y install mysql-server
+
+# Run the MySQL Secure Installation wizard
+###mysql_secure_installation
+
+sudo cat > /home/vagrant/.my.cnf << EOL 
+[client]
+user=root
+password=$MYSQL_ROOT_PASSWORD
+#database=$1
+EOL
+
+sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+#mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+
+#sudo service mysql restart
+
+mysql --password=$MYSQL_ROOT_PASSWORD --user=root -e "CREATE DATABASE $1"
+
+fi
+
+# install sublime
+if ! hash subl 2>/dev/null; then
+  wget -qO - https://download.sublimetext.com/sublimehq-pub.gpg | sudo apt-key add -
+  echo "deb https://download.sublimetext.com/ apt/stable/" | sudo tee /etc/apt/sources.list.d/sublime-text.list
+  sudo apt-get update -qq
+
+  sudo apt-get install -y libgtk2.0-0 libgdk-pixbuf2.0-0 libfontconfig1 libxrender1 libx11-6 libglib2.0-0 libxft2 libfreetype6 libc6 zlib1g libpng-dev libstdc++6-4.8-dbg libgcc1
+
+  sudo apt-get install -y sublime-text
+fi
+
+SCRIPT
