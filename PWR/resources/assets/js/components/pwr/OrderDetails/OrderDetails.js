@@ -10,9 +10,7 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Tooltip } from 'reactstrap';
 
-import {
-     AppRegistry, StyleSheet,  ToastAndroid
-} from 'react-native';
+import PhoneNumber from './PhoneNumber';
 
 export default class OrderDetails extends Component{
      constructor(props){
@@ -25,10 +23,36 @@ export default class OrderDetails extends Component{
                //data
                text: '',
                store_id: this.props.store_id || '',
+               modal: true,
           }
 
+          console.log(this.props.order_data);
+          console.log(this.props.store.getOrderDetails());
+
           console.log( props);
+          this.toggle = this.toggle.bind(this);
+          this.navigate = this.navigate.bind(this);
      }
+
+    toggle() {
+      this.setState({
+        modal: !this.state.modal
+      });
+    }
+
+    navigate(){
+      //https://tomchentw.github.io/react-google-maps/
+      console.log("Navigate");
+
+      var address = this.props.order_data.address;
+      var url = "https://www.google.com/maps/dir/?api=1&destination=" + address;
+      
+      //if android do this
+      //url = "google.navigation:q="+ address;
+      var win = window.open(url, '_blank');
+      win.focus();
+
+    }
 
      renderLoadingView(){
           return(
@@ -41,10 +65,14 @@ export default class OrderDetails extends Component{
 
      renderLoadedView(){
           return(
+             <Modal isOpen={this.state.modal} className={this.props.className}>
+          <ModalHeader toggle={this.toggle}>Order Details</ModalHeader>
+          <ModalBody>
                <div>
+          
                     <InputGroup>
                       <InputGroupAddon addonType="prepend">Order Id</InputGroupAddon>
-                      <Input placeholder="XXXXXX" value={this.state.store_id}/>
+                      <Input placeholder="XXXXXX" value={this.props.order_data.order_id || ''}/>
                     </InputGroup>
                     
                     <br />
@@ -53,7 +81,7 @@ export default class OrderDetails extends Component{
                       <InputGroupAddon id="TooltipExample" addonType="prepend">
                         $
                       </InputGroupAddon>
-                      <Input id="TooltipExample"  placeholder="Tip" type="number" step="1" />
+                      <Input id="TooltipExample" value={this.props.order_data.tip || ''} placeholder="Tip" type="number" step="1" />
                       <InputGroupAddon addonType="append">.00</InputGroupAddon>
                       <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                       <Input placeholder="Price" type="number" step="1" />
@@ -62,60 +90,30 @@ export default class OrderDetails extends Component{
 
                     <br />
 
+                    <PhoneNumber value={this.props.order_data.phone} />
+
+                    <br />
+
                     <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <Input addon type="checkbox" aria-label="Checkbox for following text input" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input placeholder="Timestamp" disabled/>
+                      <InputGroupAddon addonType="prepend">Time</InputGroupAddon>
+                      <Input placeholder="Timestamp" value={this.props.order_data.timestamp || ''} disabled/>
                     </InputGroup>
                     
                     <br />
 
                      <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <Input addon type="checkbox" aria-label="Checkbox for following text input" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input placeholder="Status" disabled />
+                      <InputGroupAddon addonType="prepend">Status</InputGroupAddon>
+                      <Input placeholder="Status" value={this.props.order_data.status || ''} disabled />
                     </InputGroup>
 
                     <br />
 
                      <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <Input addon type="checkbox" aria-label="Checkbox for following text input" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input placeholder="Address" />
+                      <InputGroupAddon addonType="prepend">Address</InputGroupAddon>
+                      <Input placeholder="Address" value={this.props.order_data.address || ''} />
                     </InputGroup>
 
                      <br />
-
-                     <InputGroup>
-                      <InputGroupAddon addonType="prepend">
-                        <InputGroupText>
-                          <Input addon type="checkbox" aria-label="Checkbox for following text input" />
-                        </InputGroupText>
-                      </InputGroupAddon>
-                      <Input placeholder="Phone" />
-                    </InputGroup>
-
-                    <br />
-
-                     <FormGroup>
-                        <Label for="exampleSelect">Select</Label>
-                        <Input type="select" name="select" id="exampleSelect">
-                          <option>1</option>
-                          <option>2</option>
-                          <option>3</option>
-                          <option>4</option>
-                          <option>5</option>
-                        </Input>
-                      </FormGroup>
 
                      <FormGroup>
                         <Label for="exampleSelectMulti">Select Multiple</Label>
@@ -130,7 +128,7 @@ export default class OrderDetails extends Component{
                     
                     <FormGroup>
                         <Label for="exampleText">Notes</Label>
-                        <Input type="textarea" name="text" id="exampleText" />
+                        <Input type="textarea" name="text" id="exampleText" value={this.props.order_data.notes || ''} />
                       </FormGroup>
 
                       <div className="float-left">
@@ -147,6 +145,8 @@ export default class OrderDetails extends Component{
                         </Button>
                       </div>
                </div>
+               </ModalBody>
+        </Modal>
           );
      }
 
@@ -190,7 +190,3 @@ export default class OrderDetails extends Component{
           }
      }
 }
-
-var style = StyleSheet.create({
-
-});

@@ -11,7 +11,6 @@ import { Tooltip } from 'reactstrap';
 
 import FontAwesome  from 'react-fontawesome';
 
-
 export default class PhoneNumber extends React.Component {
   constructor(props) 
   {

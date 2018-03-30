@@ -16,6 +16,7 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
   
   config.vm.synced_folder "PWR", "/home/vagrant/PWR"
+
   config.vm.network "forwarded_port", guest: 80, host: 8081
   config.ssh.insert_key = false
 
@@ -31,6 +32,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider :virtualbox do |vb|
     vb.name = "Laravel #{ENV['PROJECT_NAME']} Server"
     vb.customize ["modifyvm", :id, "--memory", "4096"]
+    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
   end
   
   config.vm.provision "shell", inline: $dependencies, :args => ["#{ENV['PROJECT_NAME']}"]  
@@ -175,7 +177,15 @@ EOT
     sudo apt-get update 
     sudo apt-get install google-chrome-stable -y 
 
+    ## install node and npm
+    cd PWR/
+    sudo sh scripts/install_nodejs_npm.sh
+
+    runuser -l vagrant -c "screen -dmS watch bash -c 'echo Starting NPM Watch; sudo /etc/init.d/apache2 restart; cd PWR; npm install --no-bin-links; sleep 5; npm run watch; exec bash'"
+
     DISPLAY=127.0.0.1:0.0; 
     cd PWR;
     python scripts/pwr_sync.py 1953
+
+
 SCRIPT
