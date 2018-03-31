@@ -12,7 +12,7 @@ import os.path
 
 creds = {}
 
-myfile = open(".env","r")
+myfile = open("/home/ubuntu/PWR/PWR/.env","r")
 lines = myfile.readlines()
 for line in lines:
     if line.strip().find("DB_HOST") != -1:
@@ -29,7 +29,7 @@ for line in lines:
         creds['pwr_user'] = line.strip().split("=")[1]
 
 
-pprint(creds)
+#pprint(creds)
 
 def get_db():
 	return MySQLdb.connect(host=creds['host'],    # your host, usually localhost

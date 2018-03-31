@@ -77738,6 +77738,15 @@ var PwrTable = function (_Component) {
                         { className: 'bodycontainer scrollable' },
                         this.state.table_data.map(function (listValue, index) {
                             var stat = "table_status_" + listValue.status;
+                            var tip = null;
+                            if (listValue.tip) {
+                                tip = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'div',
+                                    null,
+                                    '$',
+                                    listValue.tip
+                                );
+                            }
 
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'tr',
@@ -77751,8 +77760,18 @@ var PwrTable = function (_Component) {
                                 ),
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                     'td',
-                                    { className: stat },
-                                    listValue.status
+                                    null,
+                                    ' ',
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'div',
+                                        { className: stat },
+                                        listValue.status
+                                    ),
+                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                        'div',
+                                        null,
+                                        listValue.timestamp
+                                    )
                                 ),
                                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                     'td',
@@ -77769,14 +77788,9 @@ var PwrTable = function (_Component) {
                                             'div',
                                             null,
                                             '$',
-                                            listValue.price * tax_rate + listValue.price
+                                            listValue.price
                                         ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                            'div',
-                                            null,
-                                            '$',
-                                            listValue.tip
-                                        )
+                                        tip
                                     )
                                 )
                             );
@@ -82008,311 +82022,311 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 var OrderDetails = function (_Component) {
-     _inherits(OrderDetails, _Component);
+  _inherits(OrderDetails, _Component);
 
-     function OrderDetails(props) {
-          _classCallCheck(this, OrderDetails);
+  function OrderDetails(props) {
+    _classCallCheck(this, OrderDetails);
 
-          var _this = _possibleConstructorReturn(this, (OrderDetails.__proto__ || Object.getPrototypeOf(OrderDetails)).call(this, props));
+    var _this = _possibleConstructorReturn(this, (OrderDetails.__proto__ || Object.getPrototypeOf(OrderDetails)).call(this, props));
 
-          _this.state = {
-               uri: _this.props.uri,
-               loading: true,
+    _this.state = {
+      uri: _this.props.uri,
+      loading: true,
 
-               //data
-               text: '',
+      //data
+      text: '',
 
-               tip: _this.props.order_data.tip,
-               notes: _this.props.order_data.notes || '',
-               store_id: _this.props.store_id || '',
-               modal: true
+      tip: _this.props.order_data.tip,
+      notes: _this.props.order_data.notes || '',
+      store_id: _this.props.store_id || '',
+      modal: true
 
-               //console.log(this.props.order_data);
-               //console.log(this.props.store.getOrderDetails());
+      //console.log(this.props.order_data);
+      //console.log(this.props.store.getOrderDetails());
 
-               //console.log( props);
-          };_this.toggle = _this.toggle.bind(_this);
-          //this.save = this.save.bind(this);
-          _this.navigate = _this.navigate.bind(_this);
-          return _this;
-     }
+      //console.log( props);
+    };_this.toggle = _this.toggle.bind(_this);
+    //this.save = this.save.bind(this);
+    _this.navigate = _this.navigate.bind(_this);
+    return _this;
+  }
 
-     _createClass(OrderDetails, [{
-          key: 'toggle',
-          value: function toggle() {
+  _createClass(OrderDetails, [{
+    key: 'toggle',
+    value: function toggle() {
 
-               this.setState({
-                    modal: !this.state.modal
-               });
+      this.setState({
+        modal: !this.state.modal
+      });
 
-               __WEBPACK_IMPORTED_MODULE_3__PwrActions__["showOrderDetails"](null);
-          }
-     }, {
-          key: 'onChange',
-          value: function onChange(event) {
+      __WEBPACK_IMPORTED_MODULE_3__PwrActions__["showOrderDetails"](null);
+    }
+  }, {
+    key: 'onChange',
+    value: function onChange(event) {
 
-               event.preventDefault();
+      event.preventDefault();
 
-               var updateWhat = event.target.placeholder;
+      var updateWhat = event.target.placeholder;
 
-               if (updateWhat == "Tip") {
-                    this.state.tip = event.target.value;
-               };
-               if (updateWhat == "Price") {
-                    this.state.price = event.target.value;
-               };
-               if (updateWhat == "Address") {
-                    this.state.address = event.target.value;
-               };
-               if (updateWhat == "Phone") {
-                    this.state.phone = event.target.value;
-               };
+      if (updateWhat == "Tip") {
+        this.state.tip = event.target.value;
+      };
+      if (updateWhat == "Price") {
+        this.state.price = event.target.value;
+      };
+      if (updateWhat == "Address") {
+        this.state.address = event.target.value;
+      };
+      if (updateWhat == "Phone") {
+        this.state.phone = event.target.value;
+      };
 
-               console.log("OrderDetails change", event.target.value);
-          }
-     }, {
-          key: 'navigate',
-          value: function navigate() {
-               //https://tomchentw.github.io/react-google-maps/
-               console.log("Navigate");
+      console.log("OrderDetails change", event.target.value);
+    }
+  }, {
+    key: 'navigate',
+    value: function navigate() {
+      //https://tomchentw.github.io/react-google-maps/
+      console.log("Navigate");
 
-               var address = this.props.order_data.address;
-               var url = "https://www.google.com/maps/dir/?api=1&destination=" + address;
+      var address = this.props.order_data.address;
+      var url = "https://www.google.com/maps/dir/?api=1&destination=" + address;
 
-               //if android do this
-               //url = "google.navigation:q="+ address;
-               var win = window.open(url, '_blank');
-               win.focus();
-          }
-     }, {
-          key: 'renderLoadingView',
-          value: function renderLoadingView() {
-               return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { style: { justifyContent: 'center', alignItems: 'center', flex: 1 } },
-                    'Loading...'
-               );
-          }
-     }, {
-          key: 'save',
-          value: function save(event) {
-               console.log("Save clicked", event);
-               __WEBPACK_IMPORTED_MODULE_3__PwrActions__["updateDelivery"](this.props.order_data.store_id, this.props.order_data.order_id, this.state.tip, this.state.notes);
-               this.toggle();
-          }
-     }, {
-          key: 'renderLoadedView',
-          value: function renderLoadedView() {
-               var _this2 = this;
+      //if android do this
+      //url = "google.navigation:q="+ address;
+      var win = window.open(url, '_blank');
+      win.focus();
+    }
+  }, {
+    key: 'renderLoadingView',
+    value: function renderLoadingView() {
+      return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        'div',
+        { style: { justifyContent: 'center', alignItems: 'center', flex: 1 } },
+        'Loading...'
+      );
+    }
+  }, {
+    key: 'save',
+    value: function save(event) {
+      console.log("Save clicked", event);
+      __WEBPACK_IMPORTED_MODULE_3__PwrActions__["updateDelivery"](this.props.order_data.store_id, this.props.order_data.order_id, this.state.tip, this.state.notes);
+      this.toggle();
+    }
+  }, {
+    key: 'renderLoadedView',
+    value: function renderLoadedView() {
+      var _this2 = this;
 
-               return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    __WEBPACK_IMPORTED_MODULE_1_reactstrap__["h" /* Modal */],
-                    { isOpen: this.state.modal, className: this.props.className },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                         __WEBPACK_IMPORTED_MODULE_1_reactstrap__["j" /* ModalHeader */],
-                         { toggle: this.toggle },
-                         'Order Details'
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                         __WEBPACK_IMPORTED_MODULE_1_reactstrap__["i" /* ModalBody */],
-                         null,
-                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                              'div',
-                              null,
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'prepend' },
-                                        'Order Id'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'XXXXXX', value: this.props.order_data.order_id || '' })
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { id: 'TooltipExample', addonType: 'prepend' },
-                                        '$'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { onChange: function onChange(e) {
-                                             return _this2.onChange(e);
-                                        }, value: this.state.tip, placeholder: 'Tip', type: 'number' }),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'append' },
-                                        '.00'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'prepend' },
-                                        '$'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Price', type: 'number', value: this.props.order_data.price || '' }),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'append' },
-                                        '.00'
-                                   )
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__PhoneNumber__["a" /* default */], { value: this.props.order_data.phone }),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'prepend' },
-                                        'Time'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Timestamp', value: this.props.order_data.timestamp || '', disabled: true })
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'prepend' },
-                                        'Status'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Status', value: this.props.order_data.status || '', disabled: true })
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
-                                        { addonType: 'prepend' },
-                                        'Address'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Address', value: this.props.order_data.address || '' })
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["b" /* FormGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["g" /* Label */],
-                                        { 'for': 'exampleSelectMulti' },
-                                        'Select Multiple'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */],
-                                        { type: 'select', name: 'selectMulti', id: 'exampleSelectMulti', multiple: true },
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                             'option',
-                                             null,
-                                             '1'
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                             'option',
-                                             null,
-                                             '2'
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                             'option',
-                                             null,
-                                             '3'
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                             'option',
-                                             null,
-                                             '4'
-                                        ),
-                                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                             'option',
-                                             null,
-                                             '5'
-                                        )
-                                   )
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["b" /* FormGroup */],
-                                   null,
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["g" /* Label */],
-                                        { 'for': 'exampleText' },
-                                        'Notes'
-                                   ),
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { type: 'textarea', name: 'text', id: 'exampleText', value: this.props.order_data.notes || '' })
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   'div',
-                                   { className: 'float-left' },
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
-                                        { color: 'info', onClick: this.navigate },
-                                        'Navigate'
-                                   ),
-                                   '\xA0',
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
-                                        { color: 'info' },
-                                        'Phone'
-                                   )
-                              ),
-                              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                   'div',
-                                   { className: 'float-right' },
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
-                                        { onClick: this.toggle, color: 'danger' },
-                                        'Cancel'
-                                   ),
-                                   '\xA0',
-                                   __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
-                                        { onClick: function onClick(e) {
-                                                  return _this2.save(e);
-                                             }, color: 'success', id: 'saveButton' },
-                                        'Submit'
-                                   )
-                              )
-                         )
-                    )
-               );
-          }
-     }, {
-          key: 'fetchData',
-          value: function fetchData() {
-               if (this.state.url != null) {
+      return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["h" /* Modal */],
+        { isOpen: this.state.modal, className: this.props.className },
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          __WEBPACK_IMPORTED_MODULE_1_reactstrap__["j" /* ModalHeader */],
+          { toggle: this.toggle },
+          'Order Details'
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          __WEBPACK_IMPORTED_MODULE_1_reactstrap__["i" /* ModalBody */],
+          null,
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'div',
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'prepend' },
+                'Order Id'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'XXXXXX', value: this.props.order_data.order_id || '' })
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { id: 'TooltipExample', addonType: 'prepend' },
+                '$'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { onChange: function onChange(e) {
+                  return _this2.onChange(e);
+                }, value: this.state.tip, placeholder: 'Tip', type: 'number' }),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'append' },
+                '.00'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'prepend' },
+                '$'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Price', type: 'number', value: this.props.order_data.price || '' }),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'append' },
+                '.00'
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__PhoneNumber__["a" /* default */], { value: this.props.order_data.phone }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'prepend' },
+                'Time'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Timestamp', value: this.props.order_data.timestamp || '', disabled: true })
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'prepend' },
+                'Status'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Status', value: this.props.order_data.status || '', disabled: true })
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["d" /* InputGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["e" /* InputGroupAddon */],
+                { addonType: 'prepend' },
+                'Address'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { placeholder: 'Address', value: this.props.order_data.address || '' })
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["b" /* FormGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["g" /* Label */],
+                { 'for': 'exampleSelectMulti' },
+                'Select Multiple'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */],
+                { type: 'select', name: 'selectMulti', id: 'exampleSelectMulti', multiple: true },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'option',
+                  null,
+                  '1'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'option',
+                  null,
+                  '2'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'option',
+                  null,
+                  '3'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'option',
+                  null,
+                  '4'
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'option',
+                  null,
+                  '5'
+                )
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["b" /* FormGroup */],
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["g" /* Label */],
+                { 'for': 'exampleText' },
+                'Notes'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["c" /* Input */], { type: 'textarea', name: 'text', id: 'exampleText', value: this.props.order_data.notes || '' })
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'float-left' },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
+                { color: 'info', onClick: this.navigate },
+                'Navigate'
+              ),
+              '\xA0',
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
+                { color: 'info' },
+                'Phone'
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'div',
+              { className: 'float-right' },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
+                { onClick: this.toggle, color: 'danger' },
+                'Cancel'
+              ),
+              '\xA0',
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
+                { onClick: function onClick(e) {
+                    return _this2.save(e);
+                  }, color: 'success', id: 'saveButton' },
+                'Submit'
+              )
+            )
+          )
+        )
+      );
+    }
+  }, {
+    key: 'fetchData',
+    value: function fetchData() {
+      if (this.state.url != null) {
 
-                    fetch(this.state.uri).then(function (response) {
-                         return response.json();
-                    }).then(function (result) {}).done();
+        fetch(this.state.uri).then(function (response) {
+          return response.json();
+        }).then(function (result) {}).done();
 
-                    this.setState({
-                         loading: false
-                    });
-                    this.renderLoadedView();
-               } else {
-                    console.log("Order details: Need url for component");
-               }
-          }
-     }, {
-          key: 'componentDidMount',
-          value: function componentDidMount() {
-               this.fetchData();
-          }
-     }, {
-          key: 'render',
-          value: function render() {
-               if (!this.state.loading) {
-                    return this.renderLoadingView();
-               } else {
+        this.setState({
+          loading: false
+        });
+        this.renderLoadedView();
+      } else {
+        console.log("Order details: Need url for component");
+      }
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      this.fetchData();
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      if (!this.state.loading) {
+        return this.renderLoadingView();
+      } else {
 
-                    return this.renderLoadedView();
-               }
-          }
-     }]);
+        return this.renderLoadedView();
+      }
+    }
+  }]);
 
-     return OrderDetails;
+  return OrderDetails;
 }(__WEBPACK_IMPORTED_MODULE_0_react__["Component"]);
 
 /* harmony default export */ __webpack_exports__["a"] = (OrderDetails);

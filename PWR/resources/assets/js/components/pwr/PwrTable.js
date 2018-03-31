@@ -122,14 +122,17 @@ export default class PwrTable extends Component {
                      
                     this.state.table_data.map(( listValue, index ) => {
                         let stat = "table_status_"+ listValue.status;
-
+			let tip = null;
+			if( listValue.tip ){
+				tip = (<div>${listValue.tip}</div>)
+			}
 
                       return (
                         <tr key={index} onClick={ () => this.onClick(index) }>
                           <th scope="row">{listValue.order_id.split("#")[1]}</th>
-                          <td className={stat} >{listValue.status}</td>
+                          <td> <div className={stat} >{listValue.status}</div><div>{listValue.timestamp}</div></td>
                           <td className="table_column_address">{listValue.address}</td>
-                          <td><div><div>${((listValue.price * tax_rate) + listValue.price)}</div><div>${listValue.tip}</div></div></td>
+                          <td><div><div>${listValue.price}</div>{tip}</div></td>
                         </tr>
                       );
                     })
