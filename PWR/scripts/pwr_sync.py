@@ -28,6 +28,9 @@ for line in lines:
     if line.strip().find("PWR_USER") != -1:
         creds['pwr_user'] = line.strip().split("=")[1]
 
+
+pprint(creds)
+
 def get_db():
 	return MySQLdb.connect(host=creds['host'],    # your host, usually localhost
                      user=creds['user'],         # your username

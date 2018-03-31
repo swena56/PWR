@@ -3,12 +3,61 @@ body {
   font-weight: 300;
   font-size: 14px;
 }
+/*
+thead, tbody { display: block; }
 
-#pwr_table {
-	min-height: 500px;
-	#padding-bottom: 100px;
+tbody {
+    height: 100px;     
+    overflow-y: auto; 
+    overflow-x: hidden; 
+}
+*/
+
+.table_status_Complete{
+  color: green;
 }
 
+
+.table_column_address{
+  color:blue;
+  
+}
+react-datepicker__day.available_date {
+    color: #f00;
+}
+.available_date{
+  color: green;
+}
+.table_container {
+  height:430px;overflow:hidden;margin-right:15px;
+}
+
+.table {
+  width: 100%;
+}
+.table thead{
+ width: 100%; 
+}
+.bodycontainer { 
+  
+  max-height: 150px; width: 100%; margin: 0; overflow-y: hidden; 
+}
+/*.table-scrollable { display: block; margin: 0; padding: 0; }*/
+/*tr {
+width: 100%;
+display: inline-table;
+table-layout: fixed;
+}
+
+table{
+ height:300px;
+ display: -moz-groupbox;
+}
+tbody{
+  overflow-y: scroll;      
+  height: 200px; 
+  width: 100%;
+}*/
 table.paleBlueRows {
   font-family: "Times New Roman", Times, serif;
   border: 1px solid #FFFFFF;

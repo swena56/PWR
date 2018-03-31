@@ -12,6 +12,8 @@ import { Tooltip } from 'reactstrap';
 
 import PhoneNumber from './PhoneNumber';
 
+import * as PwrActions from '../PwrActions';
+
 export default class OrderDetails extends Component{
      constructor(props){
           super(props);
@@ -22,22 +24,44 @@ export default class OrderDetails extends Component{
 
                //data
                text: '',
+               
+               tip: this.props.order_data.tip,
+               notes: this.props.order_data.notes || '',
                store_id: this.props.store_id || '',
                modal: true,
           }
 
-          console.log(this.props.order_data);
-          console.log(this.props.store.getOrderDetails());
 
-          console.log( props);
+          //console.log(this.props.order_data);
+          //console.log(this.props.store.getOrderDetails());
+
+          //console.log( props);
           this.toggle = this.toggle.bind(this);
+          //this.save = this.save.bind(this);
           this.navigate = this.navigate.bind(this);
      }
 
     toggle() {
+
       this.setState({
         modal: !this.state.modal
       });
+      
+      PwrActions.showOrderDetails(null);
+    }
+
+    onChange(event){
+        
+        event.preventDefault();
+
+        var updateWhat = event.target.placeholder;
+
+        if( updateWhat == "Tip" ){ this.state.tip = event.target.value };
+        if( updateWhat == "Price" ){ this.state.price = event.target.value };
+        if( updateWhat == "Address" ){ this.state.address = event.target.value };
+        if( updateWhat == "Phone" ){ this.state.phone = event.target.value };
+
+        console.log("OrderDetails change", event.target.value);
     }
 
     navigate(){
@@ -63,6 +87,12 @@ export default class OrderDetails extends Component{
           );
      }
 
+     save(event){
+          console.log( "Save clicked", event );
+        PwrActions.updateDelivery(this.props.order_data.store_id, this.props.order_data.order_id, this.state.tip, this.state.notes);
+        this.toggle();
+     } 
+
      renderLoadedView(){
           return(
              <Modal isOpen={this.state.modal} className={this.props.className}>
@@ -81,10 +111,10 @@ export default class OrderDetails extends Component{
                       <InputGroupAddon id="TooltipExample" addonType="prepend">
                         $
                       </InputGroupAddon>
-                      <Input id="TooltipExample" value={this.props.order_data.tip || ''} placeholder="Tip" type="number" step="1" />
+                      <Input onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" type="number" />
                       <InputGroupAddon addonType="append">.00</InputGroupAddon>
                       <InputGroupAddon addonType="prepend">$</InputGroupAddon>
-                      <Input placeholder="Price" type="number" step="1" />
+                      <Input placeholder="Price" type="number" value={this.props.order_data.price || ''} />
                       <InputGroupAddon addonType="append">.00</InputGroupAddon>
                     </InputGroup>
 
@@ -139,8 +169,8 @@ export default class OrderDetails extends Component{
                       </div>
 
                       <div className="float-right">
-                        <Button color="danger">Cancel</Button>&nbsp;
-                        <Button color="success" id="saveButton" >
+                        <Button onClick={this.toggle} color="danger">Cancel</Button>&nbsp;
+                        <Button onClick={ (e) => this.save(e) } color="success" id="saveButton" >
                           Submit
                         </Button>
                       </div>
@@ -166,7 +196,7 @@ export default class OrderDetails extends Component{
                this.renderLoadedView();
 
                } else {
-                    console.log("Need url for component");
+                    console.log("Order details: Need url for component");
                    
                }
      }

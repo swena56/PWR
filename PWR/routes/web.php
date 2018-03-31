@@ -30,6 +30,8 @@ Route::get('/delivery/{store_id}/{date}', 'DeliveryController@get')->name('home'
 Route::get('/delivery/{store_id}/{date}/{driver}', 'DeliveryController@get')->name('home');
 
 
+//update
+Route::get('/order-details-update', 'DeliveryController@update')->name('order-details-update');
 
 Route::get('/pwr', 'pwr_controller@index')->name('home');
 Route::get('/pwr1', 'pwr1_controller@index')->name('home');

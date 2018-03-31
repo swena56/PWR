@@ -1,6 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import * as PwrActions from './PwrActions';
+import { Table } from 'reactstrap';
 
+import { Container, Row, Col } from 'reactstrap';
+import { createScrollContainer } from 'react-scroll-view';
+ 
 import './Table.css';
 // CSR:"Mallory  (8779)"
 // address"1217 N SPRING ST"
@@ -21,48 +25,121 @@ export default class PwrTable extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            table_data: this.props.table_data,
+            sort_dir_is_asc: true,
+            column_sort: 'order_id',
+        };
+
+        this.getSortDirSymbol = this.getSortDirSymbol.bind(this);
     }
 
-    onClick(order_id){
+    onClick(index){
         if( this.props.actions ){
             //console.log("Pwr clicked", this.props.actions); 
-            this.props.actions.showOrderDetails(order_id);   
+            this.props.actions.showOrderDetails(index);   
         } else {
             console.log("Actions needs to be passed");
         }
     }
 
+    sortByColumn(column){
+
+        this.setState({column_sort: column});
+        //check if we have data
+        console.log("Sort By Column", column);
+        let tmp = this.state.table_data;
+        
+        this.setState({sort_dir_is_asc: !this.state.sort_dir_is_asc});
+
+        if( column == "order_id" ){
+            
+            tmp.sort(function(obj1, obj2) {
+                if (obj1.order_id < obj2.order_id)
+                    return -1;
+                  if (obj1.order_id > obj2.order_id)
+                    return 1;
+                  return 0;
+            });
+
+            console.log(this.state.table_data, tmp);
+            this.state.table_data = tmp;    
+        }
+
+        if( column == "address" ){
+
+            tmp.sort(function(obj1, obj2) {
+                // Ascending: first age less than the previous
+                return obj2.address - obj1.address;
+            });
+
+            console.log(this.state.table_data, tmp);
+            this.state.table_data = tmp;    
+        }
+    }
+
+    getSortDirSymbol(){
+        if( this.state.sort_dir_is_asc ){
+            return (<span className="glyphicon glyphicon-triangle-bottom"></span>);
+        } else {
+            return (<span className="glyphicon glyphicon-triangle-top"></span>);
+        }
+
+
+    }
+
+
+
     render() {
 
-    	if( ! this.props.table_data ){
+    	if( ! this.state.table_data ){
     		return (
             	<div>Need table Data</div>
         	);	
     	}
 
-        return (
-            <div>
-                  <table className="paleBlueRows">
+        var number_orders = 0;
+        number_orders = this.state.table_data.length;
+
+        var tax_rate = this.props.tax_rate;
+        console.log( "tax_rate", tax_rate);
+        return (   
+                 <div>
+                    
+                  <table className="table table-hover table-striped table-condensed table-scrollable" >
                   <thead>
                     <tr>
-                    <th>order_id</th>
-                    <th>Status</th>
-                    <th>Address</th>
+                        <th onClick={ () => this.sortByColumn('order_id') }>Order Id ({number_orders})  { ( this.state.column_sort == 'order_id' ) ? this.getSortDirSymbol() : null } </th>
+                        <th onClick={ () => this.sortByColumn('status') }>Status { ( this.state.column_sort == 'status' ) ? this.getSortDirSymbol() : null } </th>
+                        <th onClick={ () => this.sortByColumn('address') }>Address { ( this.state.column_sort == 'address' ) ? this.getSortDirSymbol() : null }</th>
+                        <th onClick={ () => this.sortByColumn('price') }>Price { ( this.state.column_sort == 'price' ) ? this.getSortDirSymbol() : null }</th>
                     </tr>
-                </thead>
+
+                    </thead>
+                    
+                    <tbody className="bodycontainer scrollable">
                 {
-                    this.props.table_data.map(( listValue, index ) => {
-                  return (
-                    <tr key={index} onClick={ () => this.onClick(listValue.order_id) }>
-                      <td>{listValue.order_id}</td>
-                      <td>{listValue.status}</td>
-                      <td>{listValue.address}</td>
-                    </tr>
-                  );
-                })
+                     
+                    this.state.table_data.map(( listValue, index ) => {
+                        let stat = "table_status_"+ listValue.status;
+
+
+                      return (
+                        <tr key={index} onClick={ () => this.onClick(index) }>
+                          <th scope="row">{listValue.order_id.split("#")[1]}</th>
+                          <td className={stat} >{listValue.status}</td>
+                          <td className="table_column_address">{listValue.address}</td>
+                          <td><div><div>${((listValue.price * tax_rate) + listValue.price)}</div><div>${listValue.tip}</div></div></td>
+                        </tr>
+                      );
+                    })
+                     
                 }
+                </tbody>
+                
                 </table>
-            </div>
+                </div>
         );
     }
 }
+
