@@ -13,6 +13,11 @@ tbody {
 }
 */
 
+.table_status_Abandoned{
+  color: red;
+}
+
+
 .table_status_Complete{
   color: green;
 }
@@ -20,7 +25,7 @@ tbody {
 
 .table_column_address{
   color:blue;
-  
+
 }
 react-datepicker__day.available_date {
     color: #f00;

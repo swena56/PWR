@@ -9,12 +9,17 @@ class PwrStore extends EventEmitter {
 			data: {
 				table_data: null,
 				order_data: null,
+				drivers: [],
 				settings: {
+					driver: null,
 					zip_code: '56073',
 					start_date: moment(),
 					store_id: 1953,
 					tax_rate: .07875,
 				},
+			},
+			loading:{
+				drivers: true,
 			},
 			view: {	
 				loading: true,
@@ -24,7 +29,9 @@ class PwrStore extends EventEmitter {
 		};
 	}
 
-    init(store_id, date){
+
+
+    init(store_id, date, driver = null ){
 
     	//TODO check if store_id is valid
     	if( store_id != null && date != null ){
@@ -32,27 +39,71 @@ class PwrStore extends EventEmitter {
     		let that = this;
     		var date_str = date.format("YYYY-MM-DD");
 
-	    	$.get( "delivery/" + store_id + "/" + date_str, function( data ) {
+			 // $.ajax({
+			 //      type: "GET",
+			 //      url: 'get-drivers',
+			 //      data: { store_id: store_id, driver: driver },
+			 //      success: function (data) {
+			 //        that.state.data.drivers = data;
+			 //        that.state.loading.drivers = false;
+			 //      },
+			 //      error: function (data, textStatus, errorThrown) {
+			 //          console.log(data);
+			 //      },
 
-	    		//check to make sure logged in
-				if( data == "Need to login" ){
-					console.log("Need to login");
-					that.state.view.needs_login = true;
-					that.emit("change");
-					return;
-				}    		
+			 //  });
 
-		        var results = JSON.parse(data);
+			  $.ajax({
+			      type: "GET",
+			      url: 'delivery',
+			      data: { store_id: store_id, date: date_str, driver: driver },
+			      success: function (data) {
+			       //check to make sure logged in
+					if( data == "Need to login" ){
+						console.log("Need to login");
+						that.state.view.needs_login = true;
+						that.emit("change");
+						return;
+					}    		
 
-		        if( results && results['results']){
+			        var results = JSON.parse(data);
+
+			        if( results && results['results']){
+			          
+			          that.state.data.table_data = results['results'];
+			          that.state.view.loading = false;
+			          
+			          //console.log("Table data", results['results'], that);
+			          that.emit("change");
+			        }
+			      },
+			      error: function (data, textStatus, errorThrown) {
+			          console.log(data);
+			      },
+
+			  });
+
+	   //  	$.get( "delivery/" + store_id + "/" + date_str, function( data ) {
+
+	   //  		//check to make sure logged in
+				// if( data == "Need to login" ){
+				// 	console.log("Need to login");
+				// 	that.state.view.needs_login = true;
+				// 	that.emit("change");
+				// 	return;
+				// }    		
+
+		  //       var results = JSON.parse(data);
+
+		  //       if( results && results['results']){
 		          
-		          that.state.data.table_data = results['results'];
-		          that.state.view.loading = false;
+		  //         that.state.data.table_data = results['results'];
+		  //         that.state.view.loading = false;
 		          
-		          //console.log("Table data", results['results'], that);
-		          that.emit("change");
-		        }
-	    	});
+		  //         //console.log("Table data", results['results'], that);
+		  //         that.emit("change");
+		  //       }
+	   //  	});
     	}
     }
 
@@ -60,6 +111,9 @@ class PwrStore extends EventEmitter {
     	return this.state.data.settings.tax_rate;
     }
 
+    getStoreId(){
+    	return this.state.data.settings.store_id;
+    }
 
     setOrderDetails(index){
 
@@ -99,11 +153,6 @@ class PwrStore extends EventEmitter {
 
     updateDelivery(store_id, order_id,tip, notes){
 
-		// $.post( "order-details-update", { 
-		// 	store_id: store_id, order_id: order_id, tip: tip, notes: notes })
-		//   .done(function( data ) {
-		    
-		//   });
 		  $.ajax({
 			    type: "GET",
 			    url: 'order-details-update',
@@ -118,6 +167,16 @@ class PwrStore extends EventEmitter {
 			});
     }
 
+    getDrivers(check){
+
+    	if( check ){
+    		return this.state.loading.drivers;
+    	}
+
+    	return this.state.data.drivers;
+    }
+   
+
     dateChange(date){
       console.log(date);
       this.state.data.settings.start_date = date;
@@ -131,6 +190,10 @@ class PwrStore extends EventEmitter {
     	return this.state.view.loading;
     }
 
+    toggleLoading(){
+    	this.state.view.loading = true;
+    	this.emit("change");
+    }
 
 	getAll(){
 		return this.state.data.table_data;	
@@ -143,6 +206,7 @@ class PwrStore extends EventEmitter {
 				if( action.store_id != null && action.date != null ){
 					this.state.data.table_data = null;
 					this.state.view.loading = true;
+					this.getDrivers(action.store_id);
 					this.emit("change");
 					this.init(action.store_id, action.date);	
 				}
@@ -181,6 +245,21 @@ class PwrStore extends EventEmitter {
 					this.updateDelivery(action.store_id, action.order_id,action.tip, action.notes);
 				} else {
 					console.log( "UPDATE - missing data");
+				}
+				break;
+			}
+
+			case "SET_DRIVER":{
+				console.log( "SET_DRIVER", action );
+				if( action.driver ){
+					
+					this.state.data.settings.driver = action.driver;
+					console.log( "SET_DRIVER", this.state.data.settings.store_id, this.state.data.settings.start_date, action.driver );
+					this.toggleLoading();
+					this.init(this.state.data.settings.store_id, this.state.data.settings.start_date, action.driver);
+					
+				} else {
+					console.log( "SET_DRIVER - missing driver");
 				}
 				break;
 			}

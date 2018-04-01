@@ -94,10 +94,12 @@ export default class OrderDetails extends Component{
      } 
 
      renderLoadedView(){
+
+          var id = this.props.order_data.order_id.split("#")[1]
           return(
              <Modal isOpen={this.state.modal} className={this.props.className}>
-          <ModalHeader toggle={this.toggle}>Order Details</ModalHeader>
-          <ModalBody>
+              <ModalHeader toggle={this.toggle}>Order Details - {id}</ModalHeader>
+              <ModalBody>
                <div>
           
                     <InputGroup>
@@ -112,10 +114,8 @@ export default class OrderDetails extends Component{
                         $
                       </InputGroupAddon>
                       <Input onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" type="number" />
-                      <InputGroupAddon addonType="append">.00</InputGroupAddon>
                       <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                       <Input placeholder="Price" type="number" value={this.props.order_data.price || ''} />
-                      <InputGroupAddon addonType="append">.00</InputGroupAddon>
                     </InputGroup>
 
                     <br />

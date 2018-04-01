@@ -4,7 +4,8 @@ import { Table } from 'reactstrap';
 
 import { Container, Row, Col } from 'reactstrap';
 import { createScrollContainer } from 'react-scroll-view';
- 
+
+
 import './Table.css';
 // CSR:"Mallory  (8779)"
 // address"1217 N SPRING ST"
@@ -44,7 +45,8 @@ export default class PwrTable extends Component {
     }
 
     sortByColumn(column){
-
+        
+        //TODO need to properly sort
         this.setState({column_sort: column});
         //check if we have data
         console.log("Sort By Column", column);
@@ -89,7 +91,6 @@ export default class PwrTable extends Component {
     }
 
 
-
     render() {
 
     	if( ! this.state.table_data ){
@@ -122,10 +123,10 @@ export default class PwrTable extends Component {
                      
                     this.state.table_data.map(( listValue, index ) => {
                         let stat = "table_status_"+ listValue.status;
-			let tip = null;
-			if( listValue.tip ){
-				tip = (<div>${listValue.tip}</div>)
-			}
+            			let tip = null;
+            			if( listValue.tip ){
+            				tip = (<div>${listValue.tip}</div>)
+            			}
 
                       return (
                         <tr key={index} onClick={ () => this.onClick(index) }>

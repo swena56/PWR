@@ -38,9 +38,11 @@
         "react-router": "^2.8.1",
         "react-router-dom": "^4.2.2",
         "react-scroll-view": "^0.6.0",
+        "react-search": "^2.0.5",
         "react-split-pane": "^0.1.77",
         "react-table": "^6.8.0",
         "react-tether": "^0.6.1",
+        "react-toastify": "^3.4.3",
         "react-transition-group": "^2.2.1",
         "reactstrap": "^5.0.0-beta.3",
         "reflux": "^6.4.1"

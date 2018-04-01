@@ -6,11 +6,16 @@ import * as PwrActions from './PwrActions';
 
 import PwrTable from './PwrTable';
 import OrderDetails from './OrderDetails/OrderDetails';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import DatePicker from 'react-datepicker';
 
-import moment from 'moment';
+import {
+    Input, Modal, ModalHeader, ModalBody, ModalFooter, Col, Row,
+} from 'reactstrap';
 
+import moment from 'moment';
+import SelectDriver from './SelectDriver';
+import SearchFilter from './SearchFilter';
+import { toast } from 'react-toastify';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export default class Pwr extends React.Component {
@@ -21,16 +26,18 @@ export default class Pwr extends React.Component {
          order_data: null,
          toggle_popup: false,
          startDate: moment(),
+         drivers: null,
     };
 
     this.closeModal = this.closeModal.bind(this);
     this.dateChange = this.dateChange.bind(this);
   }
-
+ 
   componentWillMount(){
       PwrStore.on("change", () => {
         this.setState({
           table_data: PwrStore.getAll(),
+          drivers: PwrStore.getDrivers(),
         });
 
         console.log( this.state.table_data );
@@ -66,7 +73,7 @@ export default class Pwr extends React.Component {
       PwrActions.setDate(date);
       PwrActions.getTableData(1953,date);
   }
-
+ 
   render() {
 
     if( PwrStore.needsLogin() ){
@@ -85,19 +92,26 @@ export default class Pwr extends React.Component {
        order_form = (
             <OrderDetails order_data={this.state.order_data} store={PwrStore} />
       );
-
     } 
-
-
+    
     return (
-      <div>
-            <DatePicker
-                    todayButton={"Today"}
-                    selected={this.state.startDate}
-                    onChange={this.dateChange}
-                    dateFormat="YYYY-MM-DD"
-                    dayClassName={date => date.date() < Math.random() * 31 ? 'available_date' : undefined}
-                />
+      <div> 
+
+            <Row>
+            <Col>
+              <DatePicker
+                      todayButton={"Today"}
+                      selected={this.state.startDate}
+                      onChange={this.dateChange}
+                      dateFormat="YYYY-MM-DD"
+                      dayClassName={date => date.date() < Math.random() * 31 ? 'available_date' : undefined}
+                  />
+              </Col>
+              <Col>
+                <SelectDriver drivers={this.state.drivers} store_id={ PwrStore.getStoreId() } actions={PwrActions} />
+              </Col>
+            </Row>
+
             {order_form}
             
             {

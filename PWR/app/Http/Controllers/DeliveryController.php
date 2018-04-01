@@ -44,25 +44,24 @@ class DeliveryController extends Controller
 		return util::var_dump($dates);
 	}
     }
-    function getDrivers($store_id, $json=false){
 
+    function getDrivers(Request $request){
+
+    	$store_id = $request->input("store_id");
 		$drivers = DB::table('deliveries')
 			->select('driver')
-			->where('store_id',$store_id)
+			->where('store_id',[$store_id])
 			->groupBy('driver')
 			->get();
 
-		//remove driver ()
-		if( $json ){
-
-			return $drivers;
-		} else {
-			return $drivers->toJson();
-		}		
+		return $drivers->toJson();
     }
 
     function get(Request $request, $store_id, $date=null, $driver=null){
-	
+		
+		$store_id = $request->input("store_id");
+		$driver = $request->input("driver");
+		$date = $request->input("date");
 	//		return util::var_dump( $request->headers );
 		if( !Auth::check() ){
 		if(array_key_exists( 'php-auth-user', $request->headers->all() ) == true && array_key_exists( 'php-auth-pw', $request->headers->all() ) == true ){
@@ -80,62 +79,48 @@ class DeliveryController extends Controller
 		}
 		}
 
-	$now = Carbon::now();	
-	$now->setTimezone('America/Chicago');
+		$now = Carbon::now();	
+		$now->setTimezone('America/Chicago');
 
-	//return util::var_dump($now);
-	//return util::var_dump($this->getDrivers("1953"));
-	//return util::var_dump($this->getWorkDates("1953"));
-	$store_id = util::htmlentities($store_id, TRUE);
-	//return $date;
-	if( $date != null ){
-		if( $this->validateDate($date) == false ){
-			return "invalid_date";
+		$store_id = util::htmlentities($store_id, TRUE);
+
+		if( $date != null ){
+			if( $this->validateDate($date) == false ){
+				return "invalid_date";
+			}
+			$date = util::htmlentities($date, TRUE);
 		}
-		$date = util::htmlentities($date, TRUE);
-	}
 
-	$driver = util::htmlentities($driver, TRUE);
+		$driver = util::htmlentities($driver, TRUE);
 
-	$orders = null;
-	if( $date == null ){	
-	$orders = DB::table('deliveries')
-		->selectRaw("*,TRIM(LEADING '$' FROM price) AS price")
-		//->selectRaw("order_id,address,timestamp, source, service, status, description,phone,TRIM(LEADING '$' FROM price) AS price")
-		 ->whereRaw("store_id = ? AND source = 'Delivery'", [$store_id])
-                ->get();
+		$orders = null;
+		if( $date == null ){
 
-	} else {
-	
-	//return $date;
-	//return util::var_dump($date);
-	$orders = Delivery::selectRaw("*,TRIM(LEADING '$' FROM price) AS price")->whereRaw("order_id LIKE '$date%' ")->whereRaw("store_id = ? AND source = 'Delivery'", [$store_id])->get();
-//	$orders = DB::table('deliveries')
-//		->selectRaw("*,TRIM(LEADING '$' FROM price) AS price")
+			if( $driver ){
 
-//		->whereRaw("store_id = ?",[$store_id])
-//		->whereRaw("source = ?",['Delivery'])
-//		->whereRaw("timestamp >= ?",[$date])
-//		->whereRaw("order_id LIKE '?%' ",  [$date])
-//		->OrderByRaw('order_id ASC')
-  //              ->get();
-	}
-	/*	
-	$o = [];
-	$i = 1;
-	foreach( $orders as $order ) {
-		$order->id = $i;
-		array_push($o,$order);
-		$i++;
-	}
-	*/
+				$orders = DB::table('deliveries')
+				->selectRaw("*,TRIM(LEADING '$' FROM price) AS price")
+				->whereRaw("store_id = ? AND driver = ? AND source = 'Delivery'", [$store_id, $driver])
+		        ->get();
+			} else {
+				$orders = DB::table('deliveries')
+				->selectRaw("*,TRIM(LEADING '$' FROM price) AS price")
+				->whereRaw("store_id = ? AND source = 'Delivery'", [$store_id])
+		        ->get();
+			}
 
-	if( Auth::check() ){
-	return json_encode(array("results" => $orders));
-	return var_dump($orders);
-	return $orders->toJson();
-	}
-	//return "$store_id\n$date\n$driver\n" . util::var_dump($orders);
+		} else {
+
+			if( $driver ){
+				$orders = Delivery::selectRaw("*,TRIM(LEADING '$' FROM price) AS price")->whereRaw("order_id LIKE '$date%' ")->whereRaw("store_id = ? AND driver = ? AND source = 'Delivery'", [$store_id, $driver])->get();
+			} else {
+				$orders = Delivery::selectRaw("*,TRIM(LEADING '$' FROM price) AS price")->whereRaw("order_id LIKE '$date%' ")->whereRaw("store_id = ? AND source = 'Delivery'", [$store_id])->get();
+			}
+		}
+
+		if( Auth::check() ){
+			return json_encode(array("results" => $orders));
+		}
     }
 
     function validateDate($date, $format = 'Y-m-d')
