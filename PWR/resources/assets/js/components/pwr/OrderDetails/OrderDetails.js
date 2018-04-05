@@ -52,14 +52,13 @@ export default class OrderDetails extends Component{
 
     onChange(event){
         
-        event.preventDefault();
+        //event.preventDefault();
 
         var updateWhat = event.target.placeholder;
 
-        if( updateWhat == "Tip" ){ this.state.tip = event.target.value };
-        if( updateWhat == "Price" ){ this.state.price = event.target.value };
-        if( updateWhat == "Address" ){ this.state.address = event.target.value };
-        if( updateWhat == "Phone" ){ this.state.phone = event.target.value };
+        if( updateWhat == "Tip" ){ this.setState({tip: event.target.value }) };
+        if( updateWhat == "Price" ){ this.setState({price: event.target.value }) };
+        if( updateWhat == "Notes" ){ this.setState({notes: event.target.value }) };
 
         console.log("OrderDetails change", event.target.value);
     }
@@ -81,7 +80,6 @@ export default class OrderDetails extends Component{
      renderLoadingView(){
           return(
                <div style={{justifyContent:'center',alignItems:'center',flex:1}}>
-                   
                     Loading...
                </div>
           );
@@ -113,7 +111,7 @@ export default class OrderDetails extends Component{
                       <InputGroupAddon id="TooltipExample" addonType="prepend">
                         $
                       </InputGroupAddon>
-                      <Input onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" type="number" />
+                      <Input onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" />
                       <InputGroupAddon addonType="prepend">$</InputGroupAddon>
                       <Input placeholder="Price" type="number" value={this.props.order_data.price || ''} />
                     </InputGroup>

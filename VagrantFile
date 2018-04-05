@@ -1,5 +1,6 @@
-ENV["PROJECT_NAME"] = "SampleProject1"
+ENV["PROJECT_NAME"] = "PWR"
 ENV["IP_ADDRESS"] = "192.168.1.244"
+ENV["PROJECT_DIR"] = "%USERPROFILE%/PWR"
 
 ## Prepare Windows System
 # @"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin; refreshenv; choco install -y vagrant virtualbox putty Xming openssh; refreshenv; vagrant plugin install vagrant-triggers vagrant-vbguest; pause"
@@ -40,11 +41,13 @@ Vagrant.configure("2") do |config|
   #config.vm.provision "shell", inline: $script, :args => ["#{ENV['PROJECT_NAME']}"] 
 
   # After starting and provisioning the vagrant machine, start a putty connection
-  config.trigger.after  [:up, :provision ] do
-      run_remote "sudo service apache2 start"
-      run "'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' http://127.0.0.1:8081"
+  # vagrant plugin install vagrant-triggers
+  config.trigger.after  [:up, :provision, :reload ]  do
+      run_remote "sudo service apache2 start"      
       run "putty -X -ssh vagrant@127.0.0.1 -P 2222 -pw vagrant"
-      run "%COMSPEC% ."
+      run 'cmd /k "cd %USERPROFILE%/PWR & start_watch.bat"'
+      run "'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe' http://127.0.0.1:8081"
+      run "'C:/Program Files/Sublime Text 3/sublime_text.exe'"
   end
 
 end
@@ -189,11 +192,6 @@ EOT
         echo "Already add display";
       else 
         echo 'export DISPLAY=127.0.0.1:0.0;' >> "/home/vagrant/.bashrc";
+        echo 'cd PWR; python scripts/pwr_sync.py 1953' >> "/home/vagrant/.bashrc";
     fi
-
-    
-    cd PWR;
-    python scripts/pwr_sync.py 1953
-
-
 SCRIPT

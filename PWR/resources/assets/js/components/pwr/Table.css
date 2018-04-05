@@ -21,6 +21,22 @@ tbody {
   display: flex;
 }
 
+.tip_none {
+  color: red;
+}
+
+.tip_low {
+  color: red;
+}
+
+.tip_mid {
+  color: orange;
+}
+
+.tip_high {
+  color: green;
+}
+
 .table_status_out_the_door{
   color: green;
   font-weight: bold;

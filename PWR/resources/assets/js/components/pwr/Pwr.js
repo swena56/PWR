@@ -22,11 +22,18 @@ import 'react-datepicker/dist/react-datepicker.css';
 export default class Pwr extends React.Component {
   constructor(props) {
     super(props);
+
+    var date = moment();
+
+    if( date.hours() < 7 ){
+      date = date.subtract(1, "days");
+    }
+
     this.state = {
          table_data: [],
          order_data: null,
          toggle_popup: false,
-         startDate: moment(),
+         startDate: date,
          drivers: null,
     };
 

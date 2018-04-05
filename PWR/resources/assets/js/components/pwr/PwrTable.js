@@ -178,8 +178,24 @@ export default class PwrTable extends Component {
             			let tip = null;
                         let driver = ( stat == "out_the_door" ) ? (<div> {listValue.driver}</div>) : (<div></div>);
 
-            			if( listValue.tip ){
-            				tip = (<div>${listValue.tip}</div>)
+            			if( listValue.tip != null ){
+
+                            let tip_range = "tip_none";
+                            let percent = ( listValue.tip / listValue.price ) * 100;
+                            percent = Math.round(percent * 100) / 100;
+                            
+                            if( percent >= 5 ){
+                                tip_range = "tip_low";
+                            } 
+                            if( percent >= 10 ){
+                                tip_range = "tip_mid";
+                            }
+
+                            if( percent >= 15 ){
+                                tip_range = "tip_high";
+                            }
+
+            				tip = (<div className={tip_range}>${listValue.tip} - ( %{percent} ) </div>)
             			}
 
                       return (

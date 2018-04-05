@@ -16252,6 +16252,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (immutable) */ __webpack_exports__["setDate"] = setDate;
 /* harmony export (immutable) */ __webpack_exports__["updateDelivery"] = updateDelivery;
 /* harmony export (immutable) */ __webpack_exports__["setDriver"] = setDriver;
+/* harmony export (immutable) */ __webpack_exports__["refresh"] = refresh;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__dispatcher__ = __webpack_require__(106);
 
 
@@ -16275,6 +16276,10 @@ function updateDelivery(store_id, order_id, tip, notes) {
 
 function setDriver(driver) {
 	__WEBPACK_IMPORTED_MODULE_0__dispatcher__["a" /* default */].dispatch({ type: 'SET_DRIVER', driver: driver });
+}
+
+function refresh() {
+	__WEBPACK_IMPORTED_MODULE_0__dispatcher__["a" /* default */].dispatch({ type: 'REFRESH' });
 }
 
 /***/ }),
@@ -35140,7 +35145,7 @@ exports.default = eventManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(240);
-module.exports = __webpack_require__(434);
+module.exports = __webpack_require__(435);
 
 
 /***/ }),
@@ -35163,7 +35168,7 @@ __webpack_require__(241);
  */
 
 __webpack_require__(264);
-__webpack_require__(431);
+__webpack_require__(432);
 
 /***/ }),
 /* 241 */
@@ -65993,11 +65998,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_moment__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8_moment__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__SelectDriver__ = __webpack_require__(393);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__DriverSummary__ = __webpack_require__(442);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__SearchFilter__ = __webpack_require__(427);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__DriverSummary__ = __webpack_require__(427);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__SearchFilter__ = __webpack_require__(428);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12_react_toastify__ = __webpack_require__(234);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_12_react_toastify___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_12_react_toastify__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_react_datepicker_dist_react_datepicker_css__ = __webpack_require__(429);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_react_datepicker_dist_react_datepicker_css__ = __webpack_require__(430);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_13_react_datepicker_dist_react_datepicker_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_13_react_datepicker_dist_react_datepicker_css__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -66034,11 +66039,17 @@ var Pwr = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Pwr.__proto__ || Object.getPrototypeOf(Pwr)).call(this, props));
 
+    var date = __WEBPACK_IMPORTED_MODULE_8_moment___default()();
+
+    if (date.hours() < 7) {
+      date = date.subtract(1, "days");
+    }
+
     _this.state = {
       table_data: [],
       order_data: null,
       toggle_popup: false,
-      startDate: __WEBPACK_IMPORTED_MODULE_8_moment___default()(),
+      startDate: date,
       drivers: null
     };
 
@@ -78166,12 +78177,19 @@ var PwrStore = function (_EventEmitter) {
 		key: 'updateDelivery',
 		value: function updateDelivery(store_id, order_id, tip, notes) {
 
+			var that = this;
 			$.ajax({
 				type: "GET",
 				url: 'order-details-update',
 				data: { store_id: store_id, order_id: order_id, tip: tip, notes: notes },
 				success: function success(data) {
 					console.log("PwrStore: Update", data);
+					window.location.reload();
+					//   	that.state.data.table_data = null;
+					// that.state.view.loading = true;
+					// that.getDrivers(that.state.data.settings.store_id);
+					// that.init(that.state.data.settings.store_id, that.state.data.settings.start_date);	
+					that.emit("change");
 				},
 				error: function error(data, textStatus, errorThrown) {
 					console.log(data);
@@ -78220,6 +78238,17 @@ var PwrStore = function (_EventEmitter) {
 		value: function handleActions(action) {
 			console.log("PwrStore: Action", action);
 			switch (action.type) {
+
+				case "REFRESH":
+					{
+						this.state.data.table_data = null;
+						this.state.view.loading = true;
+						this.getDrivers(this.state.data.settings.store_id);
+						this.emit("change");
+						this.init(this.state.data.settings.store_id, this.state.data.settings.start_date);
+						break;
+					}
+
 				case "GET_TABLE_DATA":
 					{
 						if (action.store_id != null && action.date != null) {
@@ -79377,12 +79406,31 @@ var PwrTable = function (_Component) {
                                 listValue.driver
                             ) : __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', null);
 
-                            if (listValue.tip) {
+                            if (listValue.tip != null) {
+
+                                var tip_range = "tip_none";
+                                var percent = listValue.tip / listValue.price * 100;
+                                percent = Math.round(percent * 100) / 100;
+
+                                if (percent >= 5) {
+                                    tip_range = "tip_low";
+                                }
+                                if (percent >= 10) {
+                                    tip_range = "tip_mid";
+                                }
+
+                                if (percent >= 15) {
+                                    tip_range = "tip_high";
+                                }
+
                                 tip = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                     'div',
-                                    null,
+                                    { className: tip_range },
                                     '$',
-                                    listValue.tip
+                                    listValue.tip,
+                                    ' - ( %',
+                                    percent,
+                                    ' ) '
                                 );
                             }
 
@@ -83529,7 +83577,7 @@ exports = module.exports = __webpack_require__(62)(false);
 
 
 // module
-exports.push([module.i, "body {\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif; \n  font-weight: 300;\n  font-size: 14px;\n}\n\n/*\nthead, tbody { display: block; }\n\ntbody {\n    height: 100px;     \n    overflow-y: auto; \n    overflow-x: hidden; \n}\n*/\n\n.fullpage-wrapper {\n  width: 100%;\n  height: 100vh;\n  background: radial-gradient(#353c44, #222931);\n  display: flex;\n}\n\n.table_status_out_the_door{\n  color: green;\n  font-weight: bold;\n}\n\n.table_status_makeline{\n  color: orange;\n}\n\n.table_status_routing_station{\n  color: blue;\n}\n\n.table_status_oven{\n  color: gold;\n}\n\n\n.table_status_abandoned{\n  color: red;\n}\n\n\n.table_status_complete{\n  color: green;\n}\n\n\n.table_column_address{\n  color:blue;\n\n}\nreact-datepicker__day.available_date {\n    color: #f00;\n}\n.available_date{\n  color: green;\n}\n.table_container {\n  height:430px;overflow:hidden;margin-right:15px;\n}\n\n.table {\n  width: 100%;\n}\n.table thead{\n width: 100%; \n}\n.bodycontainer { \n  \n  max-height: 150px; width: 100%; margin: 0; overflow-y: hidden; \n}\n/*.table-scrollable { display: block; margin: 0; padding: 0; }*/\n/*tr {\nwidth: 100%;\ndisplay: inline-table;\ntable-layout: fixed;\n}\n\ntable{\n height:300px;\n display: -moz-groupbox;\n}\ntbody{\n  overflow-y: scroll;      \n  height: 200px; \n  width: 100%;\n}*/\ntable.paleBlueRows {\n  font-family: \"Times New Roman\", Times, serif;\n  border: 1px solid #FFFFFF;\n  width: 100%;\n  height: 200px;\n  text-align: center;\n  border-collapse: collapse;\n}\ntable.paleBlueRows td, table.paleBlueRows th {\n  border: 1px solid #FFFFFF;\n  padding: 3px 2px;\n}\ntable.paleBlueRows tbody td {\n  font-size: 13px;\n}\ntable.paleBlueRows tr:nth-child(even) {\n  background: #D0E4F5;\n}\ntable.paleBlueRows thead {\n  background: #0B6FA4;\n  border-bottom: 5px solid #FFFFFF;\n}\ntable.paleBlueRows thead th {\n  font-size: 17px;\n  font-weight: bold;\n  color: #FFFFFF;\n  text-align: center;\n  border-left: 2px solid #FFFFFF;\n}\ntable.paleBlueRows thead th:first-child {\n  border-left: none;\n}\n\ntable.paleBlueRows tfoot {\n  font-size: 14px;\n  font-weight: bold;\n  color: #333333;\n  background: #D0E4F5;\n  border-top: 3px solid #444444;\n}\ntable.paleBlueRows tfoot td {\n  font-size: 14px;\n}", ""]);
+exports.push([module.i, "body {\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif; \n  font-weight: 300;\n  font-size: 14px;\n}\n\n/*\nthead, tbody { display: block; }\n\ntbody {\n    height: 100px;     \n    overflow-y: auto; \n    overflow-x: hidden; \n}\n*/\n\n.fullpage-wrapper {\n  width: 100%;\n  height: 100vh;\n  background: radial-gradient(#353c44, #222931);\n  display: flex;\n}\n\n.tip_none {\n  color: red;\n}\n\n.tip_low {\n  color: red;\n}\n\n.tip_mid {\n  color: orange;\n}\n\n.tip_high {\n  color: green;\n}\n\n.table_status_out_the_door{\n  color: green;\n  font-weight: bold;\n}\n\n.table_status_makeline{\n  color: orange;\n}\n\n.table_status_routing_station{\n  color: blue;\n}\n\n.table_status_oven{\n  color: gold;\n}\n\n\n.table_status_abandoned{\n  color: red;\n}\n\n\n.table_status_complete{\n  color: green;\n}\n\n\n.table_column_address{\n  color:blue;\n\n}\nreact-datepicker__day.available_date {\n    color: #f00;\n}\n.available_date{\n  color: green;\n}\n.table_container {\n  height:430px;overflow:hidden;margin-right:15px;\n}\n\n.table {\n  width: 100%;\n}\n.table thead{\n width: 100%; \n}\n.bodycontainer { \n  \n  max-height: 150px; width: 100%; margin: 0; overflow-y: hidden; \n}\n/*.table-scrollable { display: block; margin: 0; padding: 0; }*/\n/*tr {\nwidth: 100%;\ndisplay: inline-table;\ntable-layout: fixed;\n}\n\ntable{\n height:300px;\n display: -moz-groupbox;\n}\ntbody{\n  overflow-y: scroll;      \n  height: 200px; \n  width: 100%;\n}*/\ntable.paleBlueRows {\n  font-family: \"Times New Roman\", Times, serif;\n  border: 1px solid #FFFFFF;\n  width: 100%;\n  height: 200px;\n  text-align: center;\n  border-collapse: collapse;\n}\ntable.paleBlueRows td, table.paleBlueRows th {\n  border: 1px solid #FFFFFF;\n  padding: 3px 2px;\n}\ntable.paleBlueRows tbody td {\n  font-size: 13px;\n}\ntable.paleBlueRows tr:nth-child(even) {\n  background: #D0E4F5;\n}\ntable.paleBlueRows thead {\n  background: #0B6FA4;\n  border-bottom: 5px solid #FFFFFF;\n}\ntable.paleBlueRows thead th {\n  font-size: 17px;\n  font-weight: bold;\n  color: #FFFFFF;\n  text-align: center;\n  border-left: 2px solid #FFFFFF;\n}\ntable.paleBlueRows thead th:first-child {\n  border-left: none;\n}\n\ntable.paleBlueRows tfoot {\n  font-size: 14px;\n  font-weight: bold;\n  color: #333333;\n  background: #D0E4F5;\n  border-top: 3px solid #444444;\n}\ntable.paleBlueRows tfoot td {\n  font-size: 14px;\n}", ""]);
 
 // exports
 
@@ -83704,21 +83752,18 @@ var OrderDetails = function (_Component) {
           key: 'onChange',
           value: function onChange(event) {
 
-               event.preventDefault();
+               //event.preventDefault();
 
                var updateWhat = event.target.placeholder;
 
                if (updateWhat == "Tip") {
-                    this.state.tip = event.target.value;
+                    this.setState({ tip: event.target.value });
                };
                if (updateWhat == "Price") {
-                    this.state.price = event.target.value;
+                    this.setState({ price: event.target.value });
                };
-               if (updateWhat == "Address") {
-                    this.state.address = event.target.value;
-               };
-               if (updateWhat == "Phone") {
-                    this.state.phone = event.target.value;
+               if (updateWhat == "Notes") {
+                    this.setState({ notes: event.target.value });
                };
 
                console.log("OrderDetails change", event.target.value);
@@ -83795,7 +83840,7 @@ var OrderDetails = function (_Component) {
                                    ),
                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["g" /* Input */], { onChange: function onChange(e) {
                                              return _this2.onChange(e);
-                                        }, value: this.state.tip, placeholder: 'Tip', type: 'number' }),
+                                        }, value: this.state.tip, placeholder: 'Tip' }),
                                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                         __WEBPACK_IMPORTED_MODULE_1_reactstrap__["i" /* InputGroupAddon */],
                                         { addonType: 'prepend' },
@@ -91378,7 +91423,72 @@ exports.default = toaster;
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_search__ = __webpack_require__(428);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+var DriverSummary = function (_React$Component) {
+	_inherits(DriverSummary, _React$Component);
+
+	function DriverSummary(props) {
+		_classCallCheck(this, DriverSummary);
+
+		var _this = _possibleConstructorReturn(this, (DriverSummary.__proto__ || Object.getPrototypeOf(DriverSummary)).call(this, props));
+
+		_this.state = {
+			driver: _this.props.driver
+		};
+		return _this;
+	}
+
+	_createClass(DriverSummary, [{
+		key: 'render',
+		value: function render() {
+
+			if (this.state.driver == null) {
+				return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+					'div',
+					null,
+					' '
+				);
+			}
+			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+				'div',
+				null,
+				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+					'div',
+					null,
+					' Driver Summary '
+				),
+				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+					'div',
+					null,
+					' Driver: ',
+					this.state.driver
+				)
+			);
+		}
+	}]);
+
+	return DriverSummary;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = (DriverSummary);
+
+/***/ }),
+/* 428 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_search__ = __webpack_require__(429);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_search___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_search__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -91469,7 +91579,7 @@ var SearchFilter = function (_Component) {
 /* unused harmony default export */ var _unused_webpack_default_export = (SearchFilter);
 
 /***/ }),
-/* 428 */
+/* 429 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -91928,13 +92038,13 @@ var Search = function (_Component) {
 exports.default = Search;
 
 /***/ }),
-/* 429 */
+/* 430 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(430);
+var content = __webpack_require__(431);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -91959,7 +92069,7 @@ if(false) {
 }
 
 /***/ }),
-/* 430 */
+/* 431 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(62)(false);
@@ -91973,7 +92083,7 @@ exports.push([module.i, ".react-datepicker-popper[data-placement^=\"bottom\"] .r
 
 
 /***/ }),
-/* 431 */
+/* 432 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -91981,7 +92091,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_reactstrap__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_bootstrap_dist_css_bootstrap_css__ = __webpack_require__(432);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_bootstrap_dist_css_bootstrap_css__ = __webpack_require__(433);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_bootstrap_dist_css_bootstrap_css___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_bootstrap_dist_css_bootstrap_css__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -92294,13 +92404,13 @@ var OrderDetails = function (_Component) {
 /* harmony default export */ __webpack_exports__["default"] = (OrderDetails);
 
 /***/ }),
-/* 432 */
+/* 433 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(433);
+var content = __webpack_require__(434);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -92325,7 +92435,7 @@ if(false) {
 }
 
 /***/ }),
-/* 433 */
+/* 434 */
 /***/ (function(module, exports, __webpack_require__) {
 
 exports = module.exports = __webpack_require__(62)(false);
@@ -92339,82 +92449,10 @@ exports.push([module.i, "/*!\n * Bootstrap v4.0.0 (https://getbootstrap.com)\n *
 
 
 /***/ }),
-/* 434 */
+/* 435 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
-
-/***/ }),
-/* 435 */,
-/* 436 */,
-/* 437 */,
-/* 438 */,
-/* 439 */,
-/* 440 */,
-/* 441 */,
-/* 442 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-var DriverSummary = function (_React$Component) {
-	_inherits(DriverSummary, _React$Component);
-
-	function DriverSummary(props) {
-		_classCallCheck(this, DriverSummary);
-
-		var _this = _possibleConstructorReturn(this, (DriverSummary.__proto__ || Object.getPrototypeOf(DriverSummary)).call(this, props));
-
-		_this.state = {
-			driver: _this.props.driver
-		};
-		return _this;
-	}
-
-	_createClass(DriverSummary, [{
-		key: 'render',
-		value: function render() {
-
-			if (this.state.driver == null) {
-				return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'div',
-					null,
-					' '
-				);
-			}
-			return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-				'div',
-				null,
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'div',
-					null,
-					' Driver Summary '
-				),
-				__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-					'div',
-					null,
-					' Driver: ',
-					this.state.driver
-				)
-			);
-		}
-	}]);
-
-	return DriverSummary;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["a"] = (DriverSummary);
 
 /***/ })
 /******/ ]);

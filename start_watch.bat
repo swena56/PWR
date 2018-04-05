@@ -1,0 +1,1 @@
+start cmd /k "cd %USERPROFILE%/PWR/PWR & npm install & npm run watch"

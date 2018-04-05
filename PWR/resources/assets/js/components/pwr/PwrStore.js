@@ -157,12 +157,19 @@ class PwrStore extends EventEmitter {
 
     updateDelivery(store_id, order_id,tip, notes){
 
+    	let that = this;
 		  $.ajax({
 			    type: "GET",
 			    url: 'order-details-update',
 			    data: { store_id: store_id, order_id: order_id, tip: tip, notes: notes },
 			    success: function (data) {
 			    	console.log("PwrStore: Update", data);
+			    	window.location.reload();
+			  //   	that.state.data.table_data = null;
+					// that.state.view.loading = true;
+					// that.getDrivers(that.state.data.settings.store_id);
+					// that.init(that.state.data.settings.store_id, that.state.data.settings.start_date);	
+			    	that.emit("change");
 			    },
 			    error: function (data, textStatus, errorThrown) {
 			        console.log(data);
@@ -206,6 +213,16 @@ class PwrStore extends EventEmitter {
 	handleActions(action){
 		console.log("PwrStore: Action", action);
 		switch(action.type){
+
+			case "REFRESH":{
+				this.state.data.table_data = null;
+				this.state.view.loading = true;
+				this.getDrivers(this.state.data.settings.store_id);
+				this.emit("change");
+				this.init(this.state.data.settings.store_id, this.state.data.settings.start_date);	
+				break;			
+			}
+
 			case "GET_TABLE_DATA":{
 				if( action.store_id != null && action.date != null ){
 					this.state.data.table_data = null;
@@ -243,10 +260,10 @@ class PwrStore extends EventEmitter {
 
 			case "UPDATE":{
 				
-
 				if( action.order_id && action.store_id ){
 					console.log( "UPDATE", action );
 					this.updateDelivery(action.store_id, action.order_id,action.tip, action.notes);
+
 				} else {
 					console.log( "UPDATE - missing data");
 				}

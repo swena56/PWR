@@ -21,3 +21,8 @@ export function setDriver(driver){
 	dispatcher.dispatch({type: 'SET_DRIVER', driver: driver });
 }
 
+export function refresh(){
+	dispatcher.dispatch({type: 'REFRESH' });
+}
+
+
