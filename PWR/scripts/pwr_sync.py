@@ -12,7 +12,7 @@ import os.path
 
 creds = {}
 
-myfile = open("/home/ubuntu/PWR/PWR/.env","r")
+myfile = open(".env","r")
 lines = myfile.readlines()
 for line in lines:
     if line.strip().find("DB_HOST") != -1:
@@ -28,6 +28,9 @@ for line in lines:
     if line.strip().find("PWR_USER") != -1:
         creds['pwr_user'] = line.strip().split("=")[1]
 
+
+if( creds['pwr_user'] == None ):
+	print "missing PWR credentials"
 
 #pprint(creds)
 
@@ -155,6 +158,7 @@ def sync(store_id):
             save(list)
             list = []
 
+    print("Results found: "+ str(len(list)) )
     insert_status(a[1], len(list), "success")
 
 

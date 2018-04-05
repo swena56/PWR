@@ -14,6 +14,7 @@ import {
 
 import moment from 'moment';
 import SelectDriver from './SelectDriver';
+import DriverSummary from './DriverSummary';
 import SearchFilter from './SearchFilter';
 import { toast } from 'react-toastify';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -96,7 +97,6 @@ export default class Pwr extends React.Component {
     
     return (
       <div> 
-
             <Row>
             <Col>
               <DatePicker
@@ -111,7 +111,13 @@ export default class Pwr extends React.Component {
                 <SelectDriver drivers={this.state.drivers} store_id={ PwrStore.getStoreId() } actions={PwrActions} />
               </Col>
             </Row>
+            <Row>
+              <Col>
+                <DriverSummary driver={PwrStore.getDriver()} />
+              </Col>
 
+            </Row>
+            
             {order_form}
             
             {

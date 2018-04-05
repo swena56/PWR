@@ -28,13 +28,17 @@ export default class PwrTable extends Component {
         super(props);
         this.state = {
             table_data: this.props.table_data,
-            sort_dir_is_asc: true,
-            column_sort: 'order_id',
+            sort_dir_is_asc: false,
+            column_sort: 'status',
         };
+
 
         this.getSortDirSymbol = this.getSortDirSymbol.bind(this);
     }
 
+    componentDidMount(){
+        this.sortByColumn("status");
+    }
     onClick(index){
         if( this.props.actions ){
             //console.log("Pwr clicked", this.props.actions); 
@@ -48,6 +52,7 @@ export default class PwrTable extends Component {
         
         //TODO need to properly sort
         this.setState({column_sort: column});
+
         //check if we have data
         console.log("Sort By Column", column);
         let tmp = this.state.table_data;
@@ -56,27 +61,72 @@ export default class PwrTable extends Component {
 
         if( column == "order_id" ){
             
+            //sort
             tmp.sort(function(obj1, obj2) {
-                if (obj1.order_id < obj2.order_id)
-                    return -1;
-                  if (obj1.order_id > obj2.order_id)
-                    return 1;
-                  return 0;
+                return obj2.order_id.split("#")[1] - obj1.order_id.split("#")[1];
             });
 
-            console.log(this.state.table_data, tmp);
-            this.state.table_data = tmp;    
+           if( this.state.sort_dir_is_asc == true ){
+                this.state.table_data = tmp.reverse();
+            } else {
+                this.state.table_data = tmp;   
+            }
+
+            console.log("SORT BY ORDER_ID", this.state.sort_dir_is_asc, this.state.table_data);
+        }
+
+        if( column == "price" ){
+            
+            tmp.sort(function(obj1, obj2) {
+                    return obj2.price - obj1.price;    
+            });
+
+            if( this.state.sort_dir_is_asc == true ){
+                this.state.table_data = tmp.reverse();
+            } else {
+                this.state.table_data = tmp;   
+            }
+
+            console.log("SORT BY PRICE", this.state.sort_dir_is_asc, this.state.table_data);
+            
+        }
+
+        if( column == "status" ){
+            
+            tmp.sort(function(obj1, obj2) {
+                    return new Date(obj2.timestamp) - new Date(obj1.timestamp);    
+            });
+
+            if( this.state.sort_dir_is_asc == true ){
+                this.state.table_data = tmp.reverse();
+            } else {
+                this.state.table_data = tmp;   
+            }
+
+            console.log("SORT BY TIMESTAMP", this.state.sort_dir_is_asc, this.state.table_data);
+            
         }
 
         if( column == "address" ){
 
             tmp.sort(function(obj1, obj2) {
                 // Ascending: first age less than the previous
-                return obj2.address - obj1.address;
+                console.log( obj1, obj2);
+                if (obj1.address < obj2.address)
+                    return -1;
+                  if (obj1.address > obj2.address)
+                    return 1;
+                  return 0;
+                //return obj2.address - obj1.address;
             });
 
-            console.log(this.state.table_data, tmp);
-            this.state.table_data = tmp;    
+            if( this.state.sort_dir_is_asc == true ){
+                this.state.table_data = tmp.reverse();
+            } else {
+                this.state.table_data = tmp;   
+            }
+
+            console.log("SORT BY ADDRESS", this.state.sort_dir_is_asc, this.state.table_data);
         }
     }
 
@@ -122,8 +172,12 @@ export default class PwrTable extends Component {
                 {
                      
                     this.state.table_data.map(( listValue, index ) => {
-                        let stat = "table_status_"+ listValue.status;
+
+                        let stat = listValue.status.replace(/\s+/g, '_').toLowerCase();
+                        let style = "table_status_" + stat;
             			let tip = null;
+                        let driver = ( stat == "out_the_door" ) ? (<div> {listValue.driver}</div>) : (<div></div>);
+
             			if( listValue.tip ){
             				tip = (<div>${listValue.tip}</div>)
             			}
@@ -131,7 +185,7 @@ export default class PwrTable extends Component {
                       return (
                         <tr key={index} onClick={ () => this.onClick(index) }>
                           <th scope="row">{listValue.order_id.split("#")[1]}</th>
-                          <td> <div className={stat} >{listValue.status}</div><div>{listValue.timestamp}</div></td>
+                          <td> <div className={style} >{listValue.status}</div>{driver}<div>{listValue.timestamp}</div></td>
                           <td className="table_column_address">{listValue.address}</td>
                           <td><div><div>${listValue.price}</div>{tip}</div></td>
                         </tr>

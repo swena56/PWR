@@ -11,6 +11,10 @@
 |
 */
 
+Route::get('/csstest', function () {
+    return view('csstest');
+});
+
 //change position for production
 Auth::routes();
 

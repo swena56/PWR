@@ -107,6 +107,10 @@ class PwrStore extends EventEmitter {
     	}
     }
 
+    getDriver(){
+    	return this.state.data.settings.driver;
+    }
+
     getTaxRate(){
     	return this.state.data.settings.tax_rate;
     }
@@ -260,6 +264,9 @@ class PwrStore extends EventEmitter {
 					
 				} else {
 					console.log( "SET_DRIVER - missing driver");
+					this.state.data.settings.driver = null;
+					this.toggleLoading();
+					this.init(this.state.data.settings.store_id, this.state.data.settings.start_date, null);
 				}
 				break;
 			}

@@ -3,6 +3,7 @@ body {
   font-weight: 300;
   font-size: 14px;
 }
+
 /*
 thead, tbody { display: block; }
 
@@ -13,12 +14,37 @@ tbody {
 }
 */
 
-.table_status_Abandoned{
+.fullpage-wrapper {
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(#353c44, #222931);
+  display: flex;
+}
+
+.table_status_out_the_door{
+  color: green;
+  font-weight: bold;
+}
+
+.table_status_makeline{
+  color: orange;
+}
+
+.table_status_routing_station{
+  color: blue;
+}
+
+.table_status_oven{
+  color: gold;
+}
+
+
+.table_status_abandoned{
   color: red;
 }
 
 
-.table_status_Complete{
+.table_status_complete{
   color: green;
 }
 

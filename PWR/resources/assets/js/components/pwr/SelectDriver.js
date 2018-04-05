@@ -73,6 +73,20 @@ export default class SelectDriver extends React.Component {
 
       let value = event.currentTarget.innerHTML;
 
+      if( value == "All"){
+         
+         this.setState({active_driver: null});
+         this.state.actions.setDriver(null);
+
+         toast("No driver set!", {
+          position: toast.POSITION.BOTTOM_RIGHT,
+          className: css({
+            background: "black"
+          })
+        });
+        return;
+      }
+
       var driver = this.state.drivers.filter(function(d) {
           return d.driver === value
       })[0];
@@ -129,7 +143,7 @@ export default class SelectDriver extends React.Component {
             <DropdownMenu>
               {dropDownItems}
               <DropdownItem divider />
-              <DropdownItem>All</DropdownItem>
+              <DropdownItem onClick={ (event) => this.setDriver(event) } >All</DropdownItem>
             </DropdownMenu>
           </InputGroupButtonDropdown>
       </InputGroup>
