@@ -17,10 +17,12 @@
     <div id="app">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <!-- Branding Image -->
+
     <a class="navbar-brand" href="{{ url('/') }}">
-        {{ config('app.name', 'Laravel') }}
+        <img src="{{ asset('images/PwrDelivery.gif') }}"  style="width:200px;"/>
     </a>
-   
+
+    
     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @guest
