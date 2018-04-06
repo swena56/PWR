@@ -7,10 +7,11 @@ Order Details
 Create Driver Summary
 Show last refresh date( minutes ago )
 Admin Settings
+refresh data via web browser
 PwrTable Tax settings
 hide complete
 Google Maps 
-
+Notes are not saving
 
 
 DONE

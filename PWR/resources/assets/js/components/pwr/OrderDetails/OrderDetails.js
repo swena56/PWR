@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 
 import { 
+  Form,  FormFeedback, FormText,
   FormGroup, Label, InputGroup, 
   InputGroupAddon, InputGroupText, Input, 
   Button } from 'reactstrap';
@@ -9,7 +10,7 @@ import { Popover, PopoverHeader, PopoverBody } from 'reactstrap';
 
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Tooltip } from 'reactstrap';
-
+import './OrderDetails.css';
 import PhoneNumber from './PhoneNumber';
 
 import * as PwrActions from '../PwrActions';
@@ -18,14 +19,21 @@ export default class OrderDetails extends Component{
      constructor(props){
           super(props);
 
+          let price = ( parseFloat(this.props.order_data.price) * .07875 ) + parseFloat(this.props.order_data.price);
+          price = Math.round(price * 100 ) / 100;
+
+
+
           this.state= {
                uri: this.props.uri,
                loading:true,
 
                //data
                text: '',
-               
-               tip: this.props.order_data.tip,
+               total: price + this.props.order_data.tip ,
+               price: price,
+               tax: ( this.props.order_data.price * .07875 ),
+               tip: this.props.order_data.tip || '',
                notes: this.props.order_data.notes || '',
                store_id: this.props.store_id || '',
                modal: true,
@@ -55,10 +63,37 @@ export default class OrderDetails extends Component{
         //event.preventDefault();
 
         var updateWhat = event.target.placeholder;
+        console.log( event.target );
+        if( updateWhat == "Tip" ){ 
+          this.setState({tip: event.target.value });
+        }
+        if( updateWhat == "Price" ){ 
+          this.setState({price: event.target.value });
+        }
+        if( updateWhat == "Notes" ){ 
+          this.setState({notes: event.target.value });
+        }
+        if( updateWhat == "Total" ){ 
 
-        if( updateWhat == "Tip" ){ this.setState({tip: event.target.value }) };
-        if( updateWhat == "Price" ){ this.setState({price: event.target.value }) };
-        if( updateWhat == "Notes" ){ this.setState({notes: event.target.value }) };
+          let total = event.target.value;
+
+          this.setState({total: total });
+          let price = this.props.order_data.price;
+          console.log( "Updating Total: ", total, price,  isNaN(total),isNaN(price));
+
+          if( isNaN(total) == false && isNaN(price) == false ){
+
+            let tip = total - price;
+            tip = Math.round( tip * 100 ) / 100;
+
+            console.log( "Valid total and price: ", total, price, tip);
+            //if total is larger than price, set the tip
+            
+            this.setState({tip: tip });  
+          }
+          
+          
+        };
 
         console.log("OrderDetails change", event.target.value);
     }
@@ -109,11 +144,22 @@ export default class OrderDetails extends Component{
                     
                     <InputGroup>
                       <InputGroupAddon id="TooltipExample" addonType="prepend">
-                        $
+                        Tip
                       </InputGroupAddon>
-                      <Input onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" />
-                      <InputGroupAddon addonType="prepend">$</InputGroupAddon>
-                      <Input placeholder="Price" type="number" value={this.props.order_data.price || ''} />
+
+                      { 
+                        ( this.state.tip ) ?
+                        ( <Input valid onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" /> ) 
+                        :
+                        ( <Input invalid onChange={ (e) => this.onChange(e) } value={this.state.tip} placeholder="Tip" /> ) 
+                      }
+                      
+                      
+                      <InputGroupAddon addonType="prepend">Price</InputGroupAddon>
+                      <Input placeholder="Price" value={this.state.price} />
+
+                      <InputGroupAddon addonType="prepend">Total</InputGroupAddon>
+                      <Input placeholder="Total" onChange={ (e) => this.onChange(e) } value={this.state.total||''} />
                     </InputGroup>
 
                     <br />

@@ -53,7 +53,7 @@ class syncpwr extends Command
 	
 	
 	if( is_numeric($store_id) ){
-		$result = shell_exec("python pwr_sync.py $store_id");
+		$result = shell_exec("python scripts/pwr_sync.py $store_id");
 		$this->info(var_dump($result));
 	} else {
 		$this->info("Invalid store_id");

@@ -24,36 +24,14 @@ export default class SelectDriver extends React.Component {
         dropdownOpen: false,
         splitButtonOpen: false,
         active_driver: null,
-        drivers: null,
-        store_id: this.props.store_id,
-        actions: this.props.actions,
+        drivers: this.props.drivers
     };
     
-    //console.log( "Drivers: ", this.props.drivers );
+    console.log( "Drivers: ", this.props.drivers );
     this.toggleDropDown = this.toggleDropDown.bind(this);
     this.toggleSplit = this.toggleSplit.bind(this);
   }
-  componentDidMount(){
-
-      if( this.state.store_id ){
-        var that = this;
-          $.ajax({
-                type: "GET",
-                url: '/get-drivers',
-                data: { store_id: this.state.store_id },
-                success: function (data) {
-                   if(data != undefined){
-                        let items = JSON.parse(data);
-                        that.setState({ drivers: items });
-
-                      }
-                },
-                error: function (data, textStatus, errorThrown) {
-                    console.log("Error");
-                },
-            });
-    }
-  }
+  
 
   toggleDropDown() {
     this.setState({
@@ -71,12 +49,12 @@ export default class SelectDriver extends React.Component {
 
       event.preventDefault();
 
-      let value = event.currentTarget.innerHTML;
+      let value = event.currentTarget.value;
 
       if( value == "All"){
          
          this.setState({active_driver: null});
-         this.state.actions.setDriver(null);
+         this.props.actions.setDriver({driver:null});
 
          toast("No driver set!", {
           position: toast.POSITION.BOTTOM_RIGHT,
@@ -87,15 +65,14 @@ export default class SelectDriver extends React.Component {
         return;
       }
 
-      var driver = this.state.drivers.filter(function(d) {
+      var driver = this.props.store.getDrivers().filter(function(d) {
           return d.driver === value
       })[0];
       
       if( driver  ){
-
           this.setState({active_driver: driver});
-          console.log( driver,this.state.actions);
-          this.state.actions.setDriver(driver.driver);
+          this.props.actions.setDriver(driver.driver);
+
            toast("Set Driver: " + driver.driver, {
             position: toast.POSITION.BOTTOM_RIGHT,
             className: css({
@@ -107,41 +84,56 @@ export default class SelectDriver extends React.Component {
 
   render() {
 
+    if( ! this.props.store ){
+      return (<div> Need Store </div>);
+    }
+    var drivers = this.props.store.getDrivers();
     let dropDownItems = [];
-    if( this.state.drivers == null ){
-         return (
-          <div>
-          <InputGroup>
+    
+    if( drivers == null || this.props.store.isLoading({type:'drivers'}) ){
+      drivers = null;
+      return (<InputGroup>
               <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
                 <DropdownToggle caret>
                   Select Driver
                 </DropdownToggle>
+                <DropdownMenu>
+                  <DropdownItem >Loading Drivers</DropdownItem>
+                </DropdownMenu>
               </InputGroupButtonDropdown>
           </InputGroup>
-          </div>
-        );
-    }
-
-    if( this.state.drivers && this.state.drivers.length ){
-
-      for (var i = this.state.drivers.length - 1; i >= 0; i--) {
-
-        if( this.state.drivers[i] && this.state.drivers[i].driver != " ()" ){
-          dropDownItems.push(<DropdownItem key={i} onClick={ (event) => this.setDriver(event) } >{this.state.drivers[i].driver}</DropdownItem>  );  
-        }
-      }
+      );
     }
 
     return (
       <div>
       <ToastContainer />
+          
       <InputGroup>
           <InputGroupButtonDropdown addonType="append" isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
             <DropdownToggle caret>
-              { ( this.state.active_driver != null && this.state.active_driver['driver'] != null ) ? this.state.active_driver.driver : "Select Driver" }
+              { this.props.store.getDriver() || "Select Driver" }
             </DropdownToggle>
             <DropdownMenu>
-              {dropDownItems}
+
+              {
+                  drivers.map(( d, index ) => {
+                    if( d.driver != " ()" ){
+
+                      var count = this.props.store.getOrderCountForDriver(d.driver);
+                      if( count == 0 ){
+                        return (
+                          <DropdownItem disabled key={index} >{d.driver} - ({count})</DropdownItem>
+                        );
+                      } else {
+                        return (
+                          <DropdownItem key={index} value={d.driver} onClick={ (event) => this.setDriver(event) } >{d.driver} - ({count})</DropdownItem>
+                        );  
+                      }
+                     }
+                  })
+              }
+              
               <DropdownItem divider />
               <DropdownItem onClick={ (event) => this.setDriver(event) } >All</DropdownItem>
             </DropdownMenu>

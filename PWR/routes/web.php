@@ -22,6 +22,7 @@ Route::get('/', 'DeliveryController@orderDetails')->name('order-details');
 
 Route::get('/get-order-details', 'DeliveryController@getOrderDetails');
 Route::get('/get-drivers', 'DeliveryController@getDrivers');
+Route::get('/get-driver-stats', 'DeliveryController@getDriverStats');
 
 Route::get('/orders', 'DeliveryController@orders')->name('orders');
 Route::get('/order-details', 'DeliveryController@orderDetails')->name('order-details');

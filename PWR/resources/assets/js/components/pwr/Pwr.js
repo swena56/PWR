@@ -14,6 +14,7 @@ import {
 
 import moment from 'moment';
 import SelectDriver from './SelectDriver';
+import StoreSelector from './StoreSelector';
 import DriverSummary from './DriverSummary';
 import SearchFilter from './SearchFilter';
 import { toast } from 'react-toastify';
@@ -32,6 +33,7 @@ export default class Pwr extends React.Component {
     this.state = {
          table_data: [],
          order_data: null,
+         store_id: 1907,
          toggle_popup: false,
          startDate: date,
          drivers: null,
@@ -44,11 +46,16 @@ export default class Pwr extends React.Component {
   componentWillMount(){
       PwrStore.on("change", () => {
         this.setState({
-          table_data: PwrStore.getAll(),
+          table_data: PwrStore.getAll()
+        });
+
+      });
+
+      PwrStore.on("change_drivers", () => {
+        this.setState({
           drivers: PwrStore.getDrivers(),
         });
 
-        console.log( this.state.table_data );
       });
 
       PwrStore.on("change_order_details", () => {
@@ -67,19 +74,18 @@ export default class Pwr extends React.Component {
 
   componentDidMount() {
 
-      PwrActions.getTableData(1953,this.state.startDate);
+      PwrActions.getTableData(this.state.store_id,this.state.startDate);
       //this.dateChange(moment());
   }
 
  dateChange(date){
-      console.log(date);
       
       this.setState({
         startDate: date
       });
 
       PwrActions.setDate(date);
-      PwrActions.getTableData(1953,date);
+      PwrActions.getTableData(this.state.store_id,date);
   }
  
   render() {
@@ -104,6 +110,8 @@ export default class Pwr extends React.Component {
     
     return (
       <div> 
+          <Row><Col><StoreSelector actions={PwrActions} /></Col></Row>
+          <br/>
             <Row>
             <Col>
               <DatePicker
@@ -111,18 +119,16 @@ export default class Pwr extends React.Component {
                       selected={this.state.startDate}
                       onChange={this.dateChange}
                       dateFormat="YYYY-MM-DD"
-                      dayClassName={date => date.date() < Math.random() * 31 ? 'available_date' : undefined}
+                      
                   />
               </Col>
+               
               <Col>
-                <SelectDriver drivers={this.state.drivers} store_id={ PwrStore.getStoreId() } actions={PwrActions} />
+                <SelectDriver store={PwrStore}  actions={PwrActions} />
               </Col>
-            </Row>
-            <Row>
-              <Col>
-                <DriverSummary driver={PwrStore.getDriver()} />
+               <Col>
+                <DriverSummary driver={PwrStore.getDriver()} date={PwrStore.getDate(true)} />
               </Col>
-
             </Row>
             
             {order_form}

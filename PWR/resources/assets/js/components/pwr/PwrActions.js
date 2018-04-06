@@ -1,6 +1,6 @@
 import dispatcher from './dispatcher';
 
-export function getTableData(store_id, date, driver = null){
+export function getTableData(store_id, date = null, driver = null){
 	dispatcher.dispatch({type: 'GET_TABLE_DATA', store_id: store_id, date: date, driver: driver });
 }
 

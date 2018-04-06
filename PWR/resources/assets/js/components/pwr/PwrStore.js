@@ -14,7 +14,8 @@ class PwrStore extends EventEmitter {
 					driver: null,
 					zip_code: '56073',
 					start_date: moment(),
-					store_id: 1953,
+					date: null,
+					store_id: 1907,
 					tax_rate: .07875,
 				},
 			},
@@ -22,6 +23,12 @@ class PwrStore extends EventEmitter {
 				drivers: true,
 			},
 			view: {	
+				drivers: {
+					loading: true
+				},
+				table: {
+					loading: true,
+				},
 				loading: true,
 				needs_login: false,
 				show_order_details: false,
@@ -29,40 +36,65 @@ class PwrStore extends EventEmitter {
 		};
 	}
 
+    init(store_id, date = null, driver = null ){
 
+    	//set store_id
+    	if( store_id != null ){
+    		this.state.data.settings.store_id = store_id;
+    	}
 
-    init(store_id, date, driver = null ){
+    	//set date
+    	if( date != null ){
 
-    	//TODO check if store_id is valid
-    	if( store_id != null && date != null ){
-    		
-    		let that = this;
     		var date_str = date.format("YYYY-MM-DD");
+    		console.log( "date",date_str );
+    		this.state.data.settings.date = date_str;
+    		this.state.data.settings.startDate = date;
+    	}
 
-			 // $.ajax({
-			 //      type: "GET",
-			 //      url: 'get-drivers',
-			 //      data: { store_id: store_id, driver: driver },
-			 //      success: function (data) {
-			 //        that.state.data.drivers = data;
-			 //        that.state.loading.drivers = false;
-			 //      },
-			 //      error: function (data, textStatus, errorThrown) {
-			 //          console.log(data);
-			 //      },
+    	//set driver
+    	if( driver != null ){
+    		this.state.data.settings.driver = driver;	
 
-			 //  });
+    	}
+    	
+    	this.getData();
+    }
+
+    getData(){
+    		
+    	let that = this;
+
+    	  if( this.state.data.settings.store_id && this.state.data.settings.date  ){
+
+    	  	  this.toggleLoading({type: 'drivers'});
+
+    	  	  //get drivers
+    	  	  $.ajax({
+                type: "GET",
+                url: '/get-drivers',
+                data: { store_id: this.state.data.settings.store_id },
+                success: function (data) {
+                   if(data != undefined){
+                       	that.state.data.drivers = JSON.parse(data);
+                       	that.toggleLoading({type: 'drivers', toggle: true });
+                    }
+                },
+                error: function (data, textStatus, errorThrown) {console.log("Error"); }, 
+              });
+
+    	  	  this.toggleLoading();
 
 			  $.ajax({
 			      type: "GET",
 			      url: 'delivery',
-			      data: { store_id: store_id, date: date_str, driver: driver },
+			      data: { store_id: this.state.data.settings.store_id, date: this.state.data.settings.date, driver: this.state.data.settings.driver },
 			      success: function (data) {
 			       //check to make sure logged in
 					if( data == "Need to login" ){
 						console.log("Need to login");
 						that.state.view.needs_login = true;
-						that.emit("change");
+						that.toggleLoading({type: 'table'});
 						return;
 					}    		
 
@@ -74,7 +106,7 @@ class PwrStore extends EventEmitter {
 			          that.state.view.loading = false;
 			          
 			          //console.log("Table data", results['results'], that);
-			          that.emit("change");
+    	  	  		  that.toggleLoading({type: 'table', toggle: true });
 			        }
 			      },
 			      error: function (data, textStatus, errorThrown) {
@@ -82,33 +114,27 @@ class PwrStore extends EventEmitter {
 			      },
 
 			  });
+		}
+    }
 
-	   //  	$.get( "delivery/" + store_id + "/" + date_str, function( data ) {
-
-	   //  		//check to make sure logged in
-				// if( data == "Need to login" ){
-				// 	console.log("Need to login");
-				// 	that.state.view.needs_login = true;
-				// 	that.emit("change");
-				// 	return;
-				// }    		
-
-		  //       var results = JSON.parse(data);
-
-		  //       if( results && results['results']){
-		          
-		  //         that.state.data.table_data = results['results'];
-		  //         that.state.view.loading = false;
-		          
-		  //         //console.log("Table data", results['results'], that);
-		  //         that.emit("change");
-		  //       }
-	   //  	});
-    	}
+    getOrderCountForDriver(driver){
+    	var count = this.state.data.table_data.filter(function(d) {
+          return d.driver === driver
+      	});
+    	return count.length;
     }
 
     getDriver(){
     	return this.state.data.settings.driver;
+    }
+
+    getDate(formatted){
+    	if( formatted ){
+			return this.state.data.settings.date;
+    	} else {
+    		return this.state.data.settings.start_date;	
+    	}
+    	
     }
 
     getTaxRate(){
@@ -180,9 +206,9 @@ class PwrStore extends EventEmitter {
 
     getDrivers(check){
 
-    	if( check ){
-    		return this.state.loading.drivers;
-    	}
+    	// if( check ){
+    	// 	return this.state.loading.drivers;
+    	// }
 
     	return this.state.data.drivers;
     }
@@ -197,13 +223,52 @@ class PwrStore extends EventEmitter {
     	return this.state.view.needs_login;
     }
 
-    isLoading(){
+
+    //isLoading({type:'drivers'});
+    //isLoading({type:'table'});
+    isLoading(type){
+
+    	if( type && type['drivers'] ){
+    		return this.state.view.drivers.loading;
+    	}
+
+    	if( type && type['table'] ){
+    		return this.state.view.table.loading;
+    	}
+
     	return this.state.view.loading;
     }
 
-    toggleLoading(){
+    //toggleLoading({type: 'drivers', toggle: true});
+    toggleLoading(type = null){
+
+    	if( type && type['type'] == "drivers"  ){
+
+    		if( type['toggle'] ){
+    			this.state.view.drivers.loading = !this.state.view.drivers.loading;	
+    		} else {
+    			this.state.view.drivers.loading = true;
+    		}
+
+    		return this.emit("change_drivers");
+    	} 
+
+    	if( type && type['type'] == "table" ){
+
+    		if( type['toggle'] ){
+    			this.state.view.table.loading = !this.state.view.table.loading;	
+    		} else {
+    			this.state.view.table.loading = true;
+    		}
+
+    		return this.emit("change");
+    	}
+
     	this.state.view.loading = true;
+    	this.state.view.drivers.loading = true;
+    	this.state.data.drivers = [];
     	this.emit("change");
+    	this.emit("change_drivers");
     }
 
 	getAll(){
@@ -224,12 +289,16 @@ class PwrStore extends EventEmitter {
 			}
 
 			case "GET_TABLE_DATA":{
-				if( action.store_id != null && action.date != null ){
+				if( action.store_id != null ){
 					this.state.data.table_data = null;
 					this.state.view.loading = true;
+					this.state.data.settings.driver = null;
+					this.emit("change_drivers");
 					this.getDrivers(action.store_id);
 					this.emit("change");
-					this.init(action.store_id, action.date);	
+					var date = ( action['date'] != null ) ? action.date : null;
+
+					this.init(action.store_id, date);	
 				}
 				break;			
 			}
@@ -248,10 +317,11 @@ class PwrStore extends EventEmitter {
 
 			case "SET_DATE":{
 				
-
 				if( action.date != null ){
-					console.log( "SET_DATE", action.date );
+					//console.log( "SET_DATE", action.date );
 					this.dateChange(action.date);
+					this.toggleLoading();
+					this.getData();
 				} else {
 					console.log( "SET_DATE - missing date");
 				}
@@ -272,19 +342,13 @@ class PwrStore extends EventEmitter {
 
 			case "SET_DRIVER":{
 				console.log( "SET_DRIVER", action );
-				if( action.driver ){
-					
-					this.state.data.settings.driver = action.driver;
-					console.log( "SET_DRIVER", this.state.data.settings.store_id, this.state.data.settings.start_date, action.driver );
-					this.toggleLoading();
-					this.init(this.state.data.settings.store_id, this.state.data.settings.start_date, action.driver);
-					
-				} else {
-					console.log( "SET_DRIVER - missing driver");
-					this.state.data.settings.driver = null;
-					this.toggleLoading();
-					this.init(this.state.data.settings.store_id, this.state.data.settings.start_date, null);
-				}
+				this.state.data.settings.driver = action['driver'];
+				//console.log( "SET_DRIVER", this.state.data.settings.store_id, this.state.data.settings.start_date, action.driver );
+				this.toggleLoading({type: 'drivers'});
+				this.toggleLoading({type: 'table'});
+				this.toggleLoading();
+				this.getData();
+				
 				break;
 			}
 

@@ -54,7 +54,7 @@ export default class PwrTable extends Component {
         this.setState({column_sort: column});
 
         //check if we have data
-        console.log("Sort By Column", column);
+        //console.log("Sort By Column", column);
         let tmp = this.state.table_data;
         
         this.setState({sort_dir_is_asc: !this.state.sort_dir_is_asc});
@@ -72,7 +72,7 @@ export default class PwrTable extends Component {
                 this.state.table_data = tmp;   
             }
 
-            console.log("SORT BY ORDER_ID", this.state.sort_dir_is_asc, this.state.table_data);
+            //console.log("SORT BY ORDER_ID", this.state.sort_dir_is_asc, this.state.table_data);
         }
 
         if( column == "price" ){
@@ -87,7 +87,7 @@ export default class PwrTable extends Component {
                 this.state.table_data = tmp;   
             }
 
-            console.log("SORT BY PRICE", this.state.sort_dir_is_asc, this.state.table_data);
+            //console.log("SORT BY PRICE", this.state.sort_dir_is_asc, this.state.table_data);
             
         }
 
@@ -103,8 +103,7 @@ export default class PwrTable extends Component {
                 this.state.table_data = tmp;   
             }
 
-            console.log("SORT BY TIMESTAMP", this.state.sort_dir_is_asc, this.state.table_data);
-            
+            //console.log("SORT BY TIMESTAMP", this.state.sort_dir_is_asc, this.state.table_data);
         }
 
         if( column == "address" ){
@@ -126,7 +125,7 @@ export default class PwrTable extends Component {
                 this.state.table_data = tmp;   
             }
 
-            console.log("SORT BY ADDRESS", this.state.sort_dir_is_asc, this.state.table_data);
+            //console.log("SORT BY ADDRESS", this.state.sort_dir_is_asc, this.state.table_data);
         }
     }
 
@@ -153,7 +152,6 @@ export default class PwrTable extends Component {
         number_orders = this.state.table_data.length;
 
         var tax_rate = this.props.tax_rate;
-        console.log( "tax_rate", tax_rate);
         return (   
                  <div>
                     
@@ -177,11 +175,16 @@ export default class PwrTable extends Component {
                         let style = "table_status_" + stat;
             			let tip = null;
                         let driver = ( stat == "out_the_door" ) ? (<div> {listValue.driver}</div>) : (<div></div>);
+                        
+                        let price = ( parseFloat(listValue.price) * tax_rate ) + parseFloat(listValue.price);
+                        price = Math.round(price * 100 ) / 100;
 
             			if( listValue.tip != null ){
 
+
                             let tip_range = "tip_none";
-                            let percent = ( listValue.tip / listValue.price ) * 100;
+                            let tip_value = Math.round(listValue.tip * 100) / 100;
+                            let percent = ( listValue.tip / price ) * 100;
                             percent = Math.round(percent * 100) / 100;
                             
                             if( percent >= 5 ){
@@ -195,15 +198,17 @@ export default class PwrTable extends Component {
                                 tip_range = "tip_high";
                             }
 
-            				tip = (<div className={tip_range}>${listValue.tip} - ( %{percent} ) </div>)
+            				tip = (<div className={tip_range}>${listValue.tip.toFixed(2)} ( %{percent} ) </div>)
             			}
+
+                       
 
                       return (
                         <tr key={index} onClick={ () => this.onClick(index) }>
                           <th scope="row">{listValue.order_id.split("#")[1]}</th>
                           <td> <div className={style} >{listValue.status}</div>{driver}<div>{listValue.timestamp}</div></td>
                           <td className="table_column_address">{listValue.address}</td>
-                          <td><div><div>${listValue.price}</div>{tip}</div></td>
+                          <td><div><div>${price}</div>{tip}</div></td>
                         </tr>
                       );
                     })

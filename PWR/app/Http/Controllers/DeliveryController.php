@@ -15,11 +15,8 @@ use App\Delivery;
 
 class DeliveryController extends Controller
 {
-    //
     function index(){
 		$users = DB::table('deliveries')->where('source', 'Delivery')->get();
-
-
 		return util::var_dump($users);
     }
 
@@ -34,7 +31,7 @@ class DeliveryController extends Controller
 
 		$dates = DB::select(
 				"SELECT SUBSTRING_INDEX(order_id, '#', 1) AS date FROM deliveries WHERE store_id = :store_id GROUP BY date",
-				['store_id'=> 1953]
+				['store_id'=> $store_id]
 			 );
 
 		if( $json ){
@@ -172,6 +169,22 @@ class DeliveryController extends Controller
 
 	    		return "updated";
     	}
+    }
+
+    function getDriverStats(Request $request){
+
+
+    	$driver = $request->input("driver");
+		$date = $request->input("date");
+
+		if( $driver && $date ){
+
+			//return stats like total tips, number deliveries
+			
+
+		}
+
+    	return "Driver Stats";
     }
 
 }
