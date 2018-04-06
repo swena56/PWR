@@ -12,6 +12,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Tooltip } from 'reactstrap';
 import './OrderDetails.css';
 import PhoneNumber from './PhoneNumber';
+import Map from '../Maps/Map';
 
 import * as PwrActions from '../PwrActions';
 
@@ -21,7 +22,6 @@ export default class OrderDetails extends Component{
 
           let price = ( parseFloat(this.props.order_data.price) * .07875 ) + parseFloat(this.props.order_data.price);
           price = Math.round(price * 100 ) / 100;
-
 
 
           this.state= {
@@ -37,6 +37,8 @@ export default class OrderDetails extends Component{
                notes: this.props.order_data.notes || '',
                store_id: this.props.store_id || '',
                modal: true,
+               nestedModal: false,
+               closeAll: false
           }
 
 
@@ -47,6 +49,8 @@ export default class OrderDetails extends Component{
           this.toggle = this.toggle.bind(this);
           //this.save = this.save.bind(this);
           this.navigate = this.navigate.bind(this);
+           this.toggleNested = this.toggleNested.bind(this);
+          this.toggleAll = this.toggleAll.bind(this);
      }
 
     toggle() {
@@ -57,6 +61,20 @@ export default class OrderDetails extends Component{
       
       PwrActions.showOrderDetails(null);
     }
+
+    toggleNested() {
+    this.setState({
+      nestedModal: !this.state.nestedModal,
+      closeAll: false
+    });
+  }
+
+  toggleAll() {
+    this.setState({
+      nestedModal: !this.state.nestedModal,
+      closeAll: true
+    });
+  }
 
     onChange(event){
         
@@ -130,11 +148,14 @@ export default class OrderDetails extends Component{
 
           var id = this.props.order_data.order_id.split("#")[1]
           return(
-             <Modal isOpen={this.state.modal} className={this.props.className}>
-              <ModalHeader toggle={this.toggle}>Order Details - {id}</ModalHeader>
+             <Modal isOpen={this.state.modal} className={this.props.className} toggle={this.toggle} backdrop={true}>
+              <ModalHeader toggle={this.toggle}>Order Details - {id}
+              
+              </ModalHeader>
               <ModalBody>
+
                <div>
-          
+                   
                     <InputGroup>
                       <InputGroupAddon addonType="prepend">Order Id</InputGroupAddon>
                       <Input placeholder="XXXXXX" value={this.props.order_data.order_id || ''}/>
@@ -178,6 +199,7 @@ export default class OrderDetails extends Component{
                      <InputGroup>
                       <InputGroupAddon addonType="prepend">Status</InputGroupAddon>
                       <Input placeholder="Status" value={this.props.order_data.status || ''} disabled />
+                       
                     </InputGroup>
 
                     <br />
@@ -185,6 +207,11 @@ export default class OrderDetails extends Component{
                      <InputGroup>
                       <InputGroupAddon addonType="prepend">Address</InputGroupAddon>
                       <Input placeholder="Address" value={this.props.order_data.address || ''} />
+                      <InputGroupAddon addonType="append"  >
+                        <Button color="info" id="navigateButton" onClick={() => this.navigate() }>
+                          Navigate
+                        </Button>
+                      </InputGroupAddon>
                     </InputGroup>
 
                      <br />
@@ -204,12 +231,27 @@ export default class OrderDetails extends Component{
                         <Label for="exampleText">Notes</Label>
                         <Input type="textarea" name="text" id="exampleText" value={this.props.order_data.notes || ''} />
                       </FormGroup>
-
+                      
+                      
+                      <Modal isOpen={this.state.nestedModal} toggle={this.toggleNested} onClosed={this.state.closeAll ? this.toggle : undefined}>
+                        <ModalHeader>{this.props.order_data.address}</ModalHeader>
+                        <ModalBody>
+                          <Map />
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button color="primary" onClick={this.toggleNested}>Done</Button>{' '}
+                        </ModalFooter>
+                      </Modal>
+                      
+                      <br />
+                      
                       <div className="float-left">
                         <Button color="info" onClick={this.navigate}>
                           Navigate
                         </Button>&nbsp;
                         <Button  color="info">Phone</Button>
+                        &nbsp;
+                        <Button color="success" onClick={this.toggleNested}>Show Map</Button>
                       </div>
 
                       <div className="float-right">
@@ -218,6 +260,8 @@ export default class OrderDetails extends Component{
                           Submit
                         </Button>
                       </div>
+
+                    
                </div>
                </ModalBody>
         </Modal>
