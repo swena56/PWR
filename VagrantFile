@@ -174,8 +174,6 @@ EOT
     # restart php fpm
     /etc/init.d/php7.2-fpm restart
 
-
-
     # install chrome
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
     echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google-chrome.list
@@ -194,4 +192,8 @@ EOT
         echo 'export DISPLAY=127.0.0.1:0.0;' >> "/home/vagrant/.bashrc";
         echo 'cd PWR; python scripts/pwr_sync.py 1953' >> "/home/vagrant/.bashrc";
     fi
+
+    sudo apt-get install openjdk-9-jre-headless python-pip python-dev libmysqlclient-dev -y
+    sudo pip install selenium pprint mysqlclient
+
 SCRIPT
