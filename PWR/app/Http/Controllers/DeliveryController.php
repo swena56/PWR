@@ -140,7 +140,12 @@ class DeliveryController extends Controller
     }
 
     function orderDetails(){
-		return view('order_details');
+    	if( Auth::check() ){
+    		return view('order_details');
+    	}else {
+    		return redirect('/login');
+    	}
+		
     }
 
     function getCalanderDates(){
