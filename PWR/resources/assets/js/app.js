@@ -14,4 +14,5 @@ require('./bootstrap');
  */
 
 require('./components/pwr/Pwr.js');
+require('./components/pwr/AdminPanel.js');
 require('./components/forms/OrderDetails');

@@ -15,8 +15,15 @@ Route::get('/csstest', function () {
     return view('csstest');
 });
 
+Route::get('/calc', function () {
+    return view('calculator');
+});
+
 //change position for production
 Auth::routes();
+
+Route::get('/admin', 'AdminController@index');
+Route::get('/get-users', 'AdminController@getUsers');
 
 Route::get('/', 'DeliveryController@orderDetails')->name('order-details');
 

@@ -110,27 +110,24 @@ export default class Pwr extends React.Component {
     
     return (
       <div> 
-          <Row><Col><StoreSelector actions={PwrActions} /></Col></Row>
-          <br/>
+        <br/>
             <Row>
-            <Col>
-              <DatePicker
-                      todayButton={"Today"}
-                      selected={this.state.startDate}
-                      onChange={this.dateChange}
-                      dateFormat="YYYY-MM-DD"
-                      
-                  />
-              </Col>
-               
+              <Col><StoreSelector actions={PwrActions} /></Col>
               <Col>
-                <SelectDriver store={PwrStore}  actions={PwrActions} />
+                  <DatePicker
+                    todayButton={"Today"}
+                    selected={this.state.startDate}
+                    onChange={this.dateChange}
+                    dateFormat="YYYY-MM-DD"/>
               </Col>
-               <Col>
-                <DriverSummary driver={PwrStore.getDriver()} date={PwrStore.getDate(true)} />
+              <Col>
+                  <SelectDriver store={PwrStore}  actions={PwrActions} />
+              </Col>
+              <Col>
+                  <DriverSummary driver={PwrStore.getDriver()} date={PwrStore.getDate(true)} />
               </Col>
             </Row>
-            
+            <br/>
             {order_form}
             
             {

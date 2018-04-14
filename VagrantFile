@@ -125,7 +125,7 @@ EOL
 
     fi
 
-    sudo ln -s ~/PWR /var/www/html/PWR
+    sudo ln -s /home/vagrant/PWR /var/www/html/PWR
 
     # Set up fpm
     sudo update-rc.d apache2 defaults
