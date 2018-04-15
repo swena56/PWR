@@ -21,7 +21,7 @@ class AdminController extends Controller
      	    
 	     	if( $isAdmin ){
                     
-                    $results = DB::table('users')->selectRaw("id,name,admin")->get();
+                    $results = DB::table('users')->selectRaw("id,name,email,admin,created_at")->get();
 
 	     		return view('admin', ["admin"=>$isAdmin, "users" => json_encode($results) ] );	
 	     	}	

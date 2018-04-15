@@ -5091,7 +5091,7 @@ module.exports = ReactDOMComponentTree;
 "use strict";
 /* unused harmony export Alert */
 /* unused harmony export Container */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "t", function() { return Row; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "r", function() { return Row; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return Col; });
 /* unused harmony export Navbar */
 /* unused harmony export NavbarBrand */
@@ -5138,15 +5138,15 @@ module.exports = ReactDOMComponentTree;
 /* unused harmony export PopoverTitle */
 /* unused harmony export PopoverHeader */
 /* unused harmony export Progress */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return Modal; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "s", function() { return ModalHeader; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return ModalBody; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "r", function() { return ModalFooter; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return Modal; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "q", function() { return ModalHeader; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return ModalBody; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "p", function() { return ModalFooter; });
 /* unused harmony export PopperContent */
 /* unused harmony export PopperTargetHelper */
 /* unused harmony export Tooltip */
 /* unused harmony export Table */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return ListGroup; });
+/* unused harmony export ListGroup */
 /* unused harmony export Form */
 /* unused harmony export FormFeedback */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return FormGroup; });
@@ -5166,7 +5166,7 @@ module.exports = ReactDOMComponentTree;
 /* unused harmony export TabPane */
 /* unused harmony export Jumbotron */
 /* unused harmony export Collapse */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "o", function() { return ListGroupItem; });
+/* unused harmony export ListGroupItem */
 /* unused harmony export ListGroupItemText */
 /* unused harmony export ListGroupItemHeading */
 /* unused harmony export UncontrolledAlert */
@@ -66875,7 +66875,7 @@ var Pwr = function (_React$Component) {
         null,
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('br', null),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          __WEBPACK_IMPORTED_MODULE_7_reactstrap__["t" /* Row */],
+          __WEBPACK_IMPORTED_MODULE_7_reactstrap__["r" /* Row */],
           null,
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             __WEBPACK_IMPORTED_MODULE_7_reactstrap__["b" /* Col */],
@@ -84677,16 +84677,16 @@ var OrderDetails = function (_Component) {
 
       var id = this.props.order_data.order_id.split("#")[1];
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["p" /* Modal */],
+        __WEBPACK_IMPORTED_MODULE_1_reactstrap__["n" /* Modal */],
         { isOpen: this.state.modal, className: this.props.className, toggle: this.toggle, backdrop: true },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          __WEBPACK_IMPORTED_MODULE_1_reactstrap__["s" /* ModalHeader */],
+          __WEBPACK_IMPORTED_MODULE_1_reactstrap__["q" /* ModalHeader */],
           { toggle: this.toggle },
           'Order Details - ',
           id
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          __WEBPACK_IMPORTED_MODULE_1_reactstrap__["q" /* ModalBody */],
+          __WEBPACK_IMPORTED_MODULE_1_reactstrap__["o" /* ModalBody */],
           null,
           __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
@@ -84826,20 +84826,20 @@ var OrderDetails = function (_Component) {
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1_reactstrap__["h" /* Input */], { type: 'textarea', name: 'text', id: 'exampleText', value: this.props.order_data.notes || '' })
             ),
             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["p" /* Modal */],
+              __WEBPACK_IMPORTED_MODULE_1_reactstrap__["n" /* Modal */],
               { isOpen: this.state.nestedModal, toggle: this.toggleNested, onClosed: this.state.closeAll ? this.toggle : undefined },
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["s" /* ModalHeader */],
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["q" /* ModalHeader */],
                 null,
                 this.props.order_data.address
               ),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["q" /* ModalBody */],
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["o" /* ModalBody */],
                 null,
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__Maps_Map__["a" /* default */], null)
               ),
               __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["r" /* ModalFooter */],
+                __WEBPACK_IMPORTED_MODULE_1_reactstrap__["p" /* ModalFooter */],
                 null,
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                   __WEBPACK_IMPORTED_MODULE_1_reactstrap__["a" /* Button */],
@@ -96847,6 +96847,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_react_toastify___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_react_toastify__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_glamor__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_glamor___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_glamor__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__UsersTable__ = __webpack_require__(477);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -96861,126 +96862,49 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
+
 var AdminPanel = function (_React$Component) {
-  _inherits(AdminPanel, _React$Component);
+    _inherits(AdminPanel, _React$Component);
 
-  function AdminPanel(props) {
-    _classCallCheck(this, AdminPanel);
+    function AdminPanel() {
+        _classCallCheck(this, AdminPanel);
 
-    var _this = _possibleConstructorReturn(this, (AdminPanel.__proto__ || Object.getPrototypeOf(AdminPanel)).call(this, props));
-
-    _this.state = {
-      users: null
-    };
-
-    _this.updateUser = _this.updateUser.bind(_this);
-    return _this;
-  }
-
-  _createClass(AdminPanel, [{
-    key: 'componentDidMount',
-    value: function componentDidMount() {
-      this.getUsers();
+        return _possibleConstructorReturn(this, (AdminPanel.__proto__ || Object.getPrototypeOf(AdminPanel)).apply(this, arguments));
     }
-  }, {
-    key: 'updateUser',
-    value: function updateUser(event) {
 
-      //event.preventDefault();
-      var user_id = event.target.id;
-      var admin_status = event.target.value;
+    _createClass(AdminPanel, [{
+        key: 'updateUser',
+        value: function updateUser(event) {
 
-      var users = this.state.users;
-      users[user_id].admin = admin_status == "on" ? 0 : 1;
+            //event.preventDefault();
+            var user_id = event.target.id;
+            var admin_status = event.target.value;
 
-      this.setState({ users: users });
-    }
-  }, {
-    key: 'getUsers',
-    value: function getUsers() {
+            var users = this.state.users;
+            users[user_id].admin = admin_status == "on" ? 0 : 1;
 
-      var that = this;
-      $.ajax({
-        type: "GET",
-        url: '/get-users',
-        data: {},
-        success: function success(data) {
-          if (data != undefined) {
-            var items = JSON.parse(data);
-            that.setState({ users: items });
-            console.log("Got users stats: ", items);
-          }
-        },
-        error: function error(data, textStatus, errorThrown) {
-          console.log("Error");
+            this.setState({ users: users });
         }
-      });
-    }
-  }, {
-    key: 'render',
-    value: function render() {
+    }, {
+        key: 'render',
+        value: function render() {
 
-      if (this.state.users == null) {
-        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          'div',
-          null,
-          ' No User data '
-        );
-      }
-
-      var users = [];
-      for (var i = this.state.users.length - 1; i >= 0; i--) {
-
-        var isAdmin = this.state.users[i].admin;
-        var toggle = null;
-        if (isAdmin == 1) {
-          toggle = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'div',
-            null,
-            'Admin',
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2_reactstrap__["h" /* Input */], { id: i, onClick: this.updateUser, type: 'checkbox', value: 'on', checked: true })
-          );
-        } else {
-          toggle = __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'div',
-            null,
-            'Admin',
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2_reactstrap__["h" /* Input */], { id: i, onClick: this.updateUser, type: 'checkbox', value: 'off' })
-          );
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__UsersTable__["a" /* default */], null)
+            );
         }
+    }]);
 
-        users.push(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          __WEBPACK_IMPORTED_MODULE_2_reactstrap__["o" /* ListGroupItem */],
-          { key: i },
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            'div',
-            null,
-            this.state.users[i].name,
-            toggle
-          )
-        ));
-      }
-
-      return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-        'div',
-        null,
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          __WEBPACK_IMPORTED_MODULE_2_reactstrap__["n" /* ListGroup */],
-          null,
-          users
-        )
-      );
-    }
-  }]);
-
-  return AdminPanel;
+    return AdminPanel;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
 /* harmony default export */ __webpack_exports__["default"] = (AdminPanel);
 
 
 if (document.getElementById('admin')) {
-  __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(AdminPanel, null), document.getElementById('admin'));
+    __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(AdminPanel, null), document.getElementById('admin'));
 }
 
 /***/ }),
@@ -97354,6 +97278,287 @@ exports.push([module.i, "/*!\n * Bootstrap v4.0.0 (https://getbootstrap.com)\n *
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 470 */,
+/* 471 */,
+/* 472 */,
+/* 473 */,
+/* 474 */,
+/* 475 */,
+/* 476 */,
+/* 477 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+var UsersTable = function (_React$Component) {
+  _inherits(UsersTable, _React$Component);
+
+  function UsersTable(props) {
+    _classCallCheck(this, UsersTable);
+
+    var _this = _possibleConstructorReturn(this, (UsersTable.__proto__ || Object.getPrototypeOf(UsersTable)).call(this, props));
+
+    _this.state = {
+      name: null,
+      users: null
+    };
+    return _this;
+  }
+
+  _createClass(UsersTable, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      //bootbox Defaults
+      bootbox.setDefaults({
+        locale: "en",
+        show: true,
+        backdrop: true,
+        closeButton: true,
+        animate: true,
+        className: "my-modal"
+      });
+
+      this.getUserData();
+    }
+  }, {
+    key: "updateUser",
+    value: function updateUser(event) {
+
+      //event.preventDefault();
+      var user_id = event.target.id;
+      var admin_status = event.target.value;
+
+      var users = this.state.users;
+      users[user_id].admin = admin_status == "on" ? 0 : 1;
+
+      this.setState({ users: users });
+    }
+  }, {
+    key: "getUserData",
+    value: function getUserData() {
+
+      var that = this;
+      $.ajax({
+        type: "GET",
+        url: '/get-users',
+        data: {},
+        success: function success(data) {
+          if (data != undefined) {
+            var items = JSON.parse(data);
+            that.setState({ users: items });
+            console.log("Got users stats: ", items);
+          }
+        },
+        error: function error(data, textStatus, errorThrown) {
+          console.log("Error");
+        }
+      });
+    }
+  }, {
+    key: "updateAdminStatus",
+    value: function updateAdminStatus() {
+
+      var enable_or_disable = "enable";
+      bootbox.confirm({
+        message: "Would you like " + enable_or_disable + " _username_'s admin status?",
+        backdrop: true,
+        buttons: {
+          confirm: {
+            label: 'Yes',
+            className: 'btn-success'
+          },
+          cancel: {
+            label: 'No',
+            className: 'btn-danger'
+          }
+        },
+        callback: function callback(result) {
+          console.log('This was logged in the callback: ' + result);
+        }
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      //console.log(window);
+      if (this.state.users) {
+        console.log(this.state.users);
+      }
+
+      var users = [{ id: 0, name: 'Andrew Swenson', create_date: 'Jan 1, 2015', admin: true, store_id: 1953, usage: 50, start_date: '2017-08-01', end_date: '2018-04-14', activity: '10 secs' }, { id: 1, name: 'Test User', create_date: 'Feb 2, 2016', admin: false, store_id: 1907, usage: 25, start_date: '2016-09-01', end_date: '2018-04-01', activity: '10 secs' }];
+      var table_data = [];
+      for (var i = users.length - 1; i >= 0; i--) {
+
+        table_data.push(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "tr",
+          { key: users[i].id },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "td",
+            { className: "text-center" },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              { className: "avatar" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "fa fa-user-circle", style: { fontSize: '24px' } }),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("span", { className: "avatar-status badge-success" })
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "td",
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              null,
+              users[i].name
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              { className: "small text-muted" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                "span",
+                null,
+                "New"
+              ),
+              " | Registered: ",
+              users[i].create_date
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "td",
+            { className: "text-center" },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "flag-icon flag-icon-us h4 mb-0", title: "us", id: "us" }),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              null,
+              users[i].store_id
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "td",
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              { className: "clearfix" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                "div",
+                { className: "float-left" },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  "strong",
+                  null,
+                  users[i].usage,
+                  "%"
+                )
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                "div",
+                { className: "float-right" },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  "small",
+                  { className: "text-muted" },
+                  users[i].start_date,
+                  " - ",
+                  users[i].end_date
+                )
+              )
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              { className: "progress progress-xs" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("div", { className: "progress-bar bg-success", role: "progressbar", style: { width: users[i].usage + '%' }, "aria-valuenow": users[i].usage, "aria-valuemin": "0", "aria-valuemax": "100" })
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "td",
+            { className: "text-center" },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "label",
+              { className: "switch" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("input", { type: "checkbox" }),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("span", { className: "slider round" })
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "td",
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "div",
+              { className: "small text-muted" },
+              "Last login"
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "strong",
+              null,
+              users[i].activity
+            )
+          )
+        ));
+      };
+      return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        "table",
+        { className: "table table-responsive-sm table-hover table-outline mb-0" },
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "thead",
+          { className: "thead-light" },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            "tr",
+            null,
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "th",
+              { className: "text-center" },
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "icon-people" })
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "th",
+              null,
+              "User"
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "th",
+              { className: "text-center" },
+              "StoreId"
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "th",
+              null,
+              "Usage"
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "th",
+              { className: "text-center" },
+              "Admin"
+            ),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              "th",
+              null,
+              "Activity"
+            )
+          )
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          "tbody",
+          null,
+          table_data
+        )
+      );
+    }
+  }]);
+
+  return UsersTable;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = (UsersTable);
 
 /***/ })
 /******/ ]);
