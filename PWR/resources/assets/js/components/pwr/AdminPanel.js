@@ -19,24 +19,13 @@ import UsersTable from './UsersTable';
 
 export default class AdminPanel extends React.Component {
 
-  updateUser(event){
-
-    //event.preventDefault();
-    let user_id = event.target.id;
-    let admin_status = event.target.value;
-
-    let users = this.state.users;
-    users[user_id].admin = ( admin_status == "on" ) ? 0: 1;
-    
-    this.setState({users:users})
-  }
+  
 
   render() {
 
     return (
       <div>
-          
-          <UsersTable />
+          <UsersTable  />
       </div>
     );
   }

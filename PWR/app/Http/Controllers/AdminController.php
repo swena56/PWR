@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\DB;
 use App\User;
-//use Auth;
+use Auth;
 
 class AdminController extends Controller
 {
@@ -34,7 +34,7 @@ class AdminController extends Controller
 
           $isAdmin = $auth->user()->admin;
           if( $isAdmin ){
-               $results = DB::table('users')->selectRaw("id,name,admin")->get();
+               $results = DB::table('users')->selectRaw("id,name,admin,email,last_login,created_at")->get();
                return json_encode($results);     
           } else {
                return "not_admin";
@@ -42,9 +42,27 @@ class AdminController extends Controller
           
      }
 
-     function makeAdmin(){
+     function updateUser(Request $request){
+          
+          $user_id = $request->input("user_id");
+          $admin_status = $request->input("admin_status");
+          $logged_in = Auth::check();
+          $user = Auth::user();
+          if( $logged_in && $user->admin && $user_id != null ){
 
-     	// update users set admin=1 where id = 1;
+               if( $admin_status ){
+                    $admin_status = 1;
+               } else {
+                    $admin_status = 0;
+               }
 
+               $results = DB::table('users')
+               ->where('id', ["$user_id"])
+               ->update(['admin' => $admin_status]);
+
+               return "User updated.";
+          }
+
+          return "Failed";
      }
 }

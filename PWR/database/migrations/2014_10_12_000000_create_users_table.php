@@ -14,6 +14,7 @@ class CreateUsersTable extends Migration
     public function up()
     {   
         //ALTER TABLE PWR.users ADD last_login datetime DEFAULT NULL;
+        //ALTER TABLE PWR.users ADD admin boolean DEFAULT false;
         Schema::create('users', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');

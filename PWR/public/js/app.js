@@ -80008,20 +80008,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
-// CSR:"Mallory  (8779)"
-// address"1217 N SPRING ST"
-// created_atnull
-// description"1 P12IPAZA Pepperoni↵1 12SCREEN↵1 12SCREEN Pepperoni↵1 20BCOKE↵"
-// driver"DEREK (7649)"
-// order_id"2018-03-28#348085"
-// phone"5077667066"
-// price"24.25"
-// service"Phone"
-// source"Delivery"
-// status"Complete"
-// store_id"1953"
-// timestamp"3/28/2018 16 PM"
-// tip:''
 
 var PwrTable = function (_Component) {
     _inherits(PwrTable, _Component);
@@ -96864,47 +96850,34 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 var AdminPanel = function (_React$Component) {
-    _inherits(AdminPanel, _React$Component);
+  _inherits(AdminPanel, _React$Component);
 
-    function AdminPanel() {
-        _classCallCheck(this, AdminPanel);
+  function AdminPanel() {
+    _classCallCheck(this, AdminPanel);
 
-        return _possibleConstructorReturn(this, (AdminPanel.__proto__ || Object.getPrototypeOf(AdminPanel)).apply(this, arguments));
+    return _possibleConstructorReturn(this, (AdminPanel.__proto__ || Object.getPrototypeOf(AdminPanel)).apply(this, arguments));
+  }
+
+  _createClass(AdminPanel, [{
+    key: 'render',
+    value: function render() {
+
+      return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+        'div',
+        null,
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__UsersTable__["a" /* default */], null)
+      );
     }
+  }]);
 
-    _createClass(AdminPanel, [{
-        key: 'updateUser',
-        value: function updateUser(event) {
-
-            //event.preventDefault();
-            var user_id = event.target.id;
-            var admin_status = event.target.value;
-
-            var users = this.state.users;
-            users[user_id].admin = admin_status == "on" ? 0 : 1;
-
-            this.setState({ users: users });
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__UsersTable__["a" /* default */], null)
-            );
-        }
-    }]);
-
-    return AdminPanel;
+  return AdminPanel;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
 /* harmony default export */ __webpack_exports__["default"] = (AdminPanel);
 
 
 if (document.getElementById('admin')) {
-    __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(AdminPanel, null), document.getElementById('admin'));
+  __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(AdminPanel, null), document.getElementById('admin'));
 }
 
 /***/ }),
@@ -97313,13 +97286,16 @@ var UsersTable = function (_React$Component) {
 
     _this.state = {
       name: null,
-      users: null
+      users: [],
+      loading: true,
+      table_data: [],
+      filter_search: ''
     };
     return _this;
   }
 
   _createClass(UsersTable, [{
-    key: "componentDidMount",
+    key: 'componentDidMount',
     value: function componentDidMount() {
       //bootbox Defaults
       bootbox.setDefaults({
@@ -97334,20 +97310,7 @@ var UsersTable = function (_React$Component) {
       this.getUserData();
     }
   }, {
-    key: "updateUser",
-    value: function updateUser(event) {
-
-      //event.preventDefault();
-      var user_id = event.target.id;
-      var admin_status = event.target.value;
-
-      var users = this.state.users;
-      users[user_id].admin = admin_status == "on" ? 0 : 1;
-
-      this.setState({ users: users });
-    }
-  }, {
-    key: "getUserData",
+    key: 'getUserData',
     value: function getUserData() {
 
       var that = this;
@@ -97358,8 +97321,7 @@ var UsersTable = function (_React$Component) {
         success: function success(data) {
           if (data != undefined) {
             var items = JSON.parse(data);
-            that.setState({ users: items });
-            console.log("Got users stats: ", items);
+            that.setState({ users: items, table_data: items, loading: false });
           }
         },
         error: function error(data, textStatus, errorThrown) {
@@ -97368,12 +97330,16 @@ var UsersTable = function (_React$Component) {
       });
     }
   }, {
-    key: "updateAdminStatus",
-    value: function updateAdminStatus() {
+    key: 'updateAdminStatus',
+    value: function updateAdminStatus(event) {
 
-      var enable_or_disable = "enable";
+      event.preventDefault();
+      var that = this,
+          user_id = parseInt(event.target.id);console.log(user_id);
+      var admin_status = this.state.users[user_id].admin;console.log(admin_status);
+
       bootbox.confirm({
-        message: "Would you like " + enable_or_disable + " _username_'s admin status?",
+        message: "Are you sure you want to " + (admin_status ? "disable" : "enable") + " " + this.state.users[event.target.id].name + "'s admin status?",
         backdrop: true,
         buttons: {
           confirm: {
@@ -97386,170 +97352,282 @@ var UsersTable = function (_React$Component) {
           }
         },
         callback: function callback(result) {
-          console.log('This was logged in the callback: ' + result);
+
+          if (result) {
+            console.log('Changing admin status:' + result);
+            var user = that.state.users[user_id];
+            user.admin = !user.admin;
+
+            var users = that.state.users;
+            users[user_id] = user;
+
+            that.setState({ loading: true });
+
+            $.ajax({
+              type: "GET",
+              url: 'update-user',
+              data: { user_id: user.id, admin_status: user.admin },
+              success: function success(data) {
+                if (data == "User updated.") {
+                  console.log(data, "state");
+                  that.setState({ users: users, table_data: users, loading: false });
+                }
+              },
+              error: function error(data, textStatus, errorThrown) {}
+            });
+          }
         }
       });
     }
   }, {
-    key: "render",
-    value: function render() {
-      //console.log(window);
-      if (this.state.users) {
-        console.log(this.state.users);
+    key: 'filter',
+    value: function filter(event) {
+
+      if (!this.state.users || this.state.loading) {
+        return;
       }
 
-      var users = [{ id: 0, name: 'Andrew Swenson', create_date: 'Jan 1, 2015', admin: true, store_id: 1953, usage: 50, start_date: '2017-08-01', end_date: '2018-04-14', activity: '10 secs' }, { id: 1, name: 'Test User', create_date: 'Feb 2, 2016', admin: false, store_id: 1907, usage: 25, start_date: '2016-09-01', end_date: '2018-04-01', activity: '10 secs' }];
-      var table_data = [];
-      for (var i = users.length - 1; i >= 0; i--) {
+      var users = this.state.users;
+      users = users.filter(function (user) {
+        //console.log( user.name.indexOf( event.target.value ), user );
+        if (user.name.toLowerCase().indexOf(event.target.value.toLowerCase()) != -1) {
+          return user;
+        }
+      });
 
-        table_data.push(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          "tr",
-          { key: users[i].id },
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "td",
-            { className: "text-center" },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              { className: "avatar" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "fa fa-user-circle", style: { fontSize: '24px' } }),
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("span", { className: "avatar-status badge-success" })
-            )
-          ),
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "td",
-            null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              null,
-              users[i].name
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              { className: "small text-muted" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                "span",
-                null,
-                "New"
-              ),
-              " | Registered: ",
-              users[i].create_date
-            )
-          ),
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "td",
-            { className: "text-center" },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "flag-icon flag-icon-us h4 mb-0", title: "us", id: "us" }),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              null,
-              users[i].store_id
-            )
-          ),
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "td",
-            null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              { className: "clearfix" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                "div",
-                { className: "float-left" },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                  "strong",
-                  null,
-                  users[i].usage,
-                  "%"
-                )
-              ),
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                "div",
-                { className: "float-right" },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                  "small",
-                  { className: "text-muted" },
-                  users[i].start_date,
-                  " - ",
-                  users[i].end_date
-                )
-              )
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              { className: "progress progress-xs" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("div", { className: "progress-bar bg-success", role: "progressbar", style: { width: users[i].usage + '%' }, "aria-valuenow": users[i].usage, "aria-valuemin": "0", "aria-valuemax": "100" })
-            )
-          ),
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "td",
-            { className: "text-center" },
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "label",
-              { className: "switch" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("input", { type: "checkbox" }),
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("span", { className: "slider round" })
-            )
-          ),
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "td",
-            null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "div",
-              { className: "small text-muted" },
-              "Last login"
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "strong",
-              null,
-              users[i].activity
-            )
-          )
-        ));
-      };
+      this.setState({ table_data: users });
+    }
+  }, {
+    key: 'date_diff',
+    value: function date_diff(date) {
+      // Set the unit values in milliseconds.  
+      var msecPerMinute = 1000 * 60;
+      var msecPerHour = msecPerMinute * 60;
+      var msecPerDay = msecPerHour * 24;
+
+      var date = new Date(date);
+      var dateMsec = Date.now();
+
+      // Get the difference in milliseconds.  
+      var interval = date.getTime() - dateMsec;
+
+      // Calculate how many days the interval contains. Subtract that  
+      // many days from the interval to determine the remainder.  
+      var days = Math.floor(interval / msecPerDay);
+      interval = interval - days * msecPerDay;
+
+      // Calculate the hours, minutes, and seconds.  
+      var hours = Math.floor(interval / msecPerHour);
+      interval = interval - hours * msecPerHour;
+
+      var minutes = Math.floor(interval / msecPerMinute);
+      interval = interval - minutes * msecPerMinute;
+
+      var seconds = Math.floor(interval / 1000);
+
+      // Display the result. 
+      var results = "";
+      if (days > 0) {
+        results = days + " days, ";
+      }
+      if (hours > 0) {
+        results += hours + " hours, ";
+      }
+      if (minutes > 0) {
+        results += minutes + " minutes, ";
+      }
+      if (seconds > 0) {
+        results += seconds + " seconds, ";
+      }
+
+      return results;
+      return days + " days, " + hours + " hours, " + minutes + " minutes, " + seconds + " seconds.";
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
+
       return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-        "table",
-        { className: "table table-responsive-sm table-hover table-outline mb-0" },
+        'div',
+        { className: 'users-table' },
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          "thead",
-          { className: "thead-light" },
-          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-            "tr",
-            null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "th",
-              { className: "text-center" },
-              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement("i", { className: "icon-people" })
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "th",
-              null,
-              "User"
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "th",
-              { className: "text-center" },
-              "StoreId"
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "th",
-              null,
-              "Usage"
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "th",
-              { className: "text-center" },
-              "Admin"
-            ),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-              "th",
-              null,
-              "Activity"
-            )
-          )
+          'div',
+          { className: 'loading style-2' },
+          'content'
         ),
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-          "tbody",
+          'span',
           null,
-          table_data
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { className: 'form-control', onChange: this.filter.bind(this), type: 'text', placeholder: 'Search', name: 'search' })
+        ),
+        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+          'table',
+          { className: 'table table-responsive-sm table-hover table-outline mb-0' },
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'thead',
+            { className: 'thead-light' },
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'tr',
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'th',
+                null,
+                'User'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'th',
+                { className: 'text-center' },
+                'StoreId'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'th',
+                null,
+                'Usage'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'th',
+                { className: 'text-center' },
+                'Admin'
+              ),
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'th',
+                null,
+                'Activity'
+              )
+            )
+          ),
+          __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            'tbody',
+            null,
+            this.state.loading ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+              'tr',
+              null,
+              __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'td',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-spinner fa-pulse', style: { fontSize: '24px' } }),
+                'Loading...'
+              )
+            ) : null,
+            this.state.table_data.map(function (user, i) {
+              var store_id = user.admin ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-star' }) : "";
+              var usage = Math.floor(Math.random() * 100);
+              var time = _this2.date_diff(user.last_login);
+
+              return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'tr',
+                { key: user.id },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'td',
+                  null,
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'clearfix' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                      'div',
+                      { className: 'float-left' },
+                      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'fa fa-user-circle', style: { fontSize: '24px' } })
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                      'div',
+                      { className: 'float-right' },
+                      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'strong',
+                        null,
+                        user.name
+                      ),
+                      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'small text-muted' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                          'span',
+                          null,
+                          user.email
+                        )
+                      )
+                    )
+                  )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'td',
+                  { className: 'text-center' },
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('i', { className: 'flag-icon flag-icon-us h4 mb-0', title: 'us', id: 'us' }),
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    null,
+                    store_id
+                  )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'td',
+                  null,
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'clearfix' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                      'div',
+                      { className: 'float-left' },
+                      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'strong',
+                        null,
+                        usage,
+                        '%'
+                      )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                      'div',
+                      { className: 'float-right' },
+                      __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'small',
+                        { className: 'text-muted' },
+                        'Extra details'
+                      )
+                    )
+                  ),
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'progress progress-xs' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'progress-bar bg-success', role: 'progressbar', style: { width: usage + '%' }, 'aria-valuenow': usage, 'aria-valuemin': '0', 'aria-valuemax': '100' })
+                  )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'td',
+                  { className: 'text-center' },
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'label',
+                    { className: 'switch' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { id: i, type: 'checkbox', checked: !!user.admin, onChange: _this2.updateAdminStatus.bind(_this2) }),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'slider round' })
+                  )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                  'td',
+                  null,
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'small text-muted' },
+                    'Last login'
+                  ),
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'strong',
+                    { className: 'small' },
+                    time
+                  ),
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'small text-muted' },
+                    'Register'
+                  ),
+                  __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'strong',
+                    { className: 'small' },
+                    user.created_at
+                  )
+                )
+              );
+            })
+          )
         )
       );
     }

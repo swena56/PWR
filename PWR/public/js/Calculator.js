@@ -191,67 +191,67 @@ class Calculator extends React.Component {
 
 <div className="row">
 <div className="col-md-3 box">
-  <button id="clear" onClick={this.handleInputButton} type="button" className="btn btn-primary btn-lg">Clear</button>
+  <button id="clear" onClick={this.handleInputButton} type="button" className="calc btn btn-primary btn-lg">Clear</button>
 </div>
 <div className="col-md-3 box"></div>
 <div className="col-md-3 box">
-  <button id="other" disabled onClick={this.handleInputButton} type="button" className="btn btn-info btn-lg">%</button>
+  <button id="other" disabled onClick={this.handleInputButton} type="button" className="calc btn btn-info btn-lg">%</button>
 </div>
 <div className="col-md-3 box">
-  <button id="other" onClick={this.handleInputButton} type="button" className="btn btn-info btn-lg">&#247;</button>
+  <button id="other" onClick={this.handleInputButton} type="button" className="calc btn btn-info btn-lg">&#247;</button>
 </div>
 </div>
 <div className="row">
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">7</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">7</button>
 </div>
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">8</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">8</button>
 </div>
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">9</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">9</button>
 </div>
 <div className="col-md-3 box">
-  <button id="other" onClick={this.handleInputButton} type="button" className="btn btn-info btn-lg">*</button>
+  <button id="other" onClick={this.handleInputButton} type="button" className="calc btn btn-info btn-lg">*</button>
 </div>
 </div>
 <div className="row">
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">4</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">4</button>
 </div>
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">5</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">5</button>
 </div>
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">6</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">6</button>
 </div>
 <div className="col-md-3 box">
-  <button id="other" onClick={this.handleInputButton} type="button" className="btn btn-info btn-lg">-</button>
+  <button id="other" onClick={this.handleInputButton} type="button" className="calc btn btn-info btn-lg">-</button>
 </div>
 </div>
 <div className="row">
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">1</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">1</button>
 </div>
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">2</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">2</button>
 </div>
 <div className="col-md-3 box">
-  <button id="number" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">3</button>
+  <button id="number" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">3</button>
 </div>
 <div className="col-md-3 box">
-  <button id="other" onClick={this.handleInputButton} type="button" className="btn btn-info btn-lg">+</button>
+  <button id="other" onClick={this.handleInputButton} type="button" className="calc btn btn-info btn-lg">+</button>
 </div>
 </div>
 <div className="row">
 <div className="col-md-6 box">
-  <button id="other" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">0</button>
+  <button id="other" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">0</button>
 </div>
 <div className="col-md-3 box">
-  <button id="other" onClick={this.handleInputButton} type="button" className="btn btn-secondary btn-lg">.</button>
+  <button id="other" onClick={this.handleInputButton} type="button" className="calc btn btn-secondary btn-lg">.</button>
 </div>
 <div className="col-md-3 box">
-  <button id="solve" onClick={this.handleInputButton} type="button" className="btn btn-info btn-lg">=</button>
+  <button id="solve" onClick={this.handleInputButton} type="button" className="calc btn btn-info btn-lg">=</button>
 </div>
 
 </div>

@@ -24,6 +24,7 @@ Auth::routes();
 
 Route::get('/admin', 'AdminController@index');
 Route::get('/get-users', 'AdminController@getUsers');
+Route::get('/update-user', 'AdminController@updateUser'); //may need to change this to post
 
 Route::get('/', 'DeliveryController@orderDetails')->name('order-details');
 

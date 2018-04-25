@@ -5,22 +5,7 @@ import { Table } from 'reactstrap';
 import { Container, Row, Col } from 'reactstrap';
 import { createScrollContainer } from 'react-scroll-view';
 
-
 import './Table.css';
-// CSR:"Mallory  (8779)"
-// address"1217 N SPRING ST"
-// created_atnull
-// description"1 P12IPAZA Pepperoni↵1 12SCREEN↵1 12SCREEN Pepperoni↵1 20BCOKE↵"
-// driver"DEREK (7649)"
-// order_id"2018-03-28#348085"
-// phone"5077667066"
-// price"24.25"
-// service"Phone"
-// source"Delivery"
-// status"Complete"
-// store_id"1953"
-// timestamp"3/28/2018 16 PM"
-// tip:''
 
 export default class PwrTable extends Component {
 
